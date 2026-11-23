@@ -1,0 +1,363 @@
+{
+  "name": "whale_desk_chair_rear_three_quarter",
+  "axes": "x-right y-down",
+  "unitsPerTexturePixel": 0.31667,
+  "seatAnchor": [
+    128,
+    210
+  ],
+  "room": {
+    "frameSize": [
+      2048,
+      2048
+    ],
+    "seat": [
+      645,
+      1206
+    ],
+    "worldUnitsPerModelUnit": 1,
+    "chairOrigin": [
+      571,
+      1068
+    ],
+    "chairSize": [
+      230,
+      305
+    ],
+    "back": "chair/chair_full.png",
+    "legOccluder": "chair/chair_cushion.png",
+    "legOccluderAppliesTo": [
+      "seat_leg_far",
+      "seat_leg_near"
+    ],
+    "foreground": "chair/chair_front.png"
+  },
+  "portraitFrame": {
+    "cropInRoom": [
+      510,
+      938,
+      328,
+      381
+    ],
+    "seatInCell": [
+      135,
+      268
+    ]
+  },
+  "parts": [
+    {
+      "id": "seat_leg_far",
+      "tex": "seat_leg_far",
+      "z": 0,
+      "parent": "leg_far",
+      "box": [
+        80.36667,
+        175.36667,
+        63.33333,
+        90.25
+      ],
+      "pivot": [
+        130,
+        192
+      ],
+      "texSize": [
+        200,
+        285
+      ]
+    },
+    {
+      "id": "seat_leg_near",
+      "tex": "seat_leg_near",
+      "z": 1,
+      "parent": "leg_near",
+      "box": [
+        47.36667,
+        173.36667,
+        84.23333,
+        101.33333
+      ],
+      "pivot": [
+        119,
+        191
+      ],
+      "texSize": [
+        266,
+        320
+      ]
+    },
+    {
+      "id": "seat_bodice",
+      "tex": "seat_bodice",
+      "z": 2,
+      "parent": "torso",
+      "box": [
+        94.36667,
+        92.36667,
+        77.26667,
+        88.35
+      ],
+      "pivot": [
+        134,
+        173
+      ],
+      "texSize": [
+        244,
+        279
+      ]
+    },
+    {
+      "id": "seat_arm_far",
+      "tex": "seat_arm_far",
+      "z": 3,
+      "parent": "arm_far",
+      "box": [
+        46.36667,
+        34.36667,
+        78.21667,
+        70.3
+      ],
+      "pivot": [
+        112,
+        86
+      ],
+      "texSize": [
+        247,
+        222
+      ]
+    },
+    {
+      "id": "seat_skirt",
+      "tex": "seat_skirt",
+      "z": 4,
+      "parent": "waist",
+      "box": [
+        51.36667,
+        156.36667,
+        149.15,
+        67.13333
+      ],
+      "pivot": [
+        145,
+        172
+      ],
+      "texSize": [
+        471,
+        212
+      ]
+    },
+    {
+      "id": "seat_arm_near",
+      "tex": "seat_arm_near",
+      "z": 5,
+      "parent": "arm_near",
+      "box": [
+        6.36667,
+        65.36667,
+        88.35,
+        50.35
+      ],
+      "pivot": [
+        82,
+        98
+      ],
+      "texSize": [
+        279,
+        159
+      ]
+    },
+    {
+      "id": "seat_tail",
+      "tex": "seat_tail",
+      "z": 6,
+      "parent": "tail",
+      "box": [
+        127.36667,
+        118.36667,
+        182.4,
+        76.31667
+      ],
+      "pivot": [
+        145,
+        183
+      ],
+      "texSize": [
+        576,
+        241
+      ]
+    },
+    {
+      "id": "seat_waist_bow",
+      "tex": "seat_waist_bow",
+      "z": 7,
+      "parent": "waist",
+      "box": [
+        120.36667,
+        165.36667,
+        44.33333,
+        34.2
+      ],
+      "pivot": [
+        144,
+        177
+      ],
+      "texSize": [
+        140,
+        108
+      ]
+    },
+    {
+      "id": "seat_ahoge",
+      "tex": "seat_ahoge",
+      "z": 8,
+      "parent": "head",
+      "box": [
+        96.36667,
+        -18.63333,
+        46.23333,
+        34.2
+      ],
+      "pivot": [
+        104,
+        12
+      ],
+      "texSize": [
+        146,
+        108
+      ]
+    },
+    {
+      "id": "seat_fin_far",
+      "tex": "seat_fin_far",
+      "z": 9,
+      "parent": "head",
+      "box": [
+        156.36667,
+        36.36667,
+        31.35,
+        24.38333
+      ],
+      "pivot": [
+        160,
+        41
+      ],
+      "texSize": [
+        99,
+        77
+      ]
+    },
+    {
+      "id": "seat_ear_bow_far",
+      "tex": "seat_ear_bow_far",
+      "z": 10,
+      "parent": "head",
+      "box": [
+        147.36667,
+        31.36667,
+        15.2,
+        12.35
+      ],
+      "pivot": [
+        155,
+        38
+      ],
+      "texSize": [
+        48,
+        39
+      ]
+    },
+    {
+      "id": "seat_hair",
+      "tex": "seat_hair",
+      "z": 11,
+      "parent": "head",
+      "box": [
+        33.36667,
+        6.36667,
+        186.2,
+        162.13333
+      ],
+      "pivot": [
+        121,
+        66
+      ],
+      "texSize": [
+        588,
+        512
+      ]
+    },
+    {
+      "id": "seat_headdress",
+      "tex": "seat_headdress",
+      "z": 12,
+      "parent": "head",
+      "box": [
+        65.36667,
+        1.36667,
+        92.15,
+        70.3
+      ],
+      "pivot": [
+        121,
+        66
+      ],
+      "texSize": [
+        291,
+        222
+      ]
+    },
+    {
+      "id": "seat_fin_near",
+      "tex": "seat_fin_near",
+      "z": 13,
+      "parent": "head",
+      "box": [
+        26.36667,
+        66.36667,
+        52.25,
+        34.2
+      ],
+      "pivot": [
+        72,
+        71
+      ],
+      "texSize": [
+        165,
+        108
+      ]
+    },
+    {
+      "id": "seat_ear_bow_near",
+      "tex": "seat_ear_bow_near",
+      "z": 14,
+      "parent": "head",
+      "box": [
+        61.36667,
+        60.36667,
+        23.11667,
+        17.41667
+      ],
+      "pivot": [
+        72,
+        70
+      ],
+      "texSize": [
+        73,
+        55
+      ]
+    }
+  ],
+  "idleLoop": {
+    "characterAtlas": "sprites/seated_idle_4x4.png",
+    "chairAtlas": "sprites/seated_idle_chair_4x4.png",
+    "columns": 4,
+    "rows": 4,
+    "count": 16,
+    "cellSize": [
+      328,
+      381
+    ],
+    "msPerFrame": 120,
+    "order": "row-major",
+    "loop": true
+  }
+}

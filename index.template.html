@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>蓝白鲸语 · 房间漫游</title>
+<style>/* STYLE */</style>
+</head>
+<body>
+<main class="app">
+  <header class="topbar">
+    <div class="brand"><svg viewBox="0 0 48 36" aria-hidden="true"><path d="M7 17c0-7 6-12 15-12 7 0 12 4 14 10 5 0 6-5 6-5 3 9-2 14-8 14-3 5-8 7-15 5C11 28 7 24 7 17Z" fill="currentColor"/><circle cx="15" cy="15" r="1.5" fill="white"/><path d="M22 3V0m4 4 3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><div><h1>蓝白鲸语</h1><p>A LITTLE ROOM, A LITTLE COMPANION</p></div></div>
+    <span class="version"><i></i>房间漫游 · 优化版</span>
+  </header>
+  <div class="workspace">
+    <section class="room-panel" aria-label="蓝白鲸语房间">
+      <div class="room-top"><span class="room-label"><b id="location-label">她的小房间</b></span><button id="focus" class="icon-button" title="隐藏或显示控制面板" aria-label="专注看场景">⛶</button></div>
+      <svg id="scene" viewBox="80 110 1880 1790" role="img" aria-label="点地面指路，点床睡觉，点书桌用电脑，点窗下软垫看天" tabindex="0">
+        <defs><filter id="black-alpha"><feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/></filter><mask id="occlusion" x="0" y="0" width="2048" height="2048" maskUnits="userSpaceOnUse" style="mask-type:luminance"><rect width="2048" height="2048" fill="white"/><g id="occluders"></g></mask></defs>
+        <image id="room-image" x="0" y="0" width="2048" height="2048"/>
+        <g id="nav-debug" hidden></g>
+        <g id="route-visual"><path id="route-line" fill="none" stroke="#639bc7" stroke-width="4" stroke-dasharray="3 13" stroke-linecap="round" opacity=".55"/><g id="destination" hidden><ellipse rx="22" ry="11" fill="#e8f7ff" stroke="#649bc5" stroke-width="3"/><ellipse rx="8" ry="4" fill="#649bc5"/></g></g>
+        <g id="actor" mask="url(#occlusion)"><ellipse id="shadow" class="shadow"/><g id="pet"></g><g id="effects"></g></g>
+        <use id="desk-foreground" href="#room-image" mask="url(#seated-chair-front)" pointer-events="none"/>
+        <g id="bubble" hidden><rect x="-154" y="-46" width="308" height="64" rx="24" fill="white" stroke="#d1e1ef" stroke-width="2"/><path d="m-8 18 8 10 8-10" fill="white"/><text text-anchor="middle" y="-5" font-size="24" fill="#526c87"></text></g>
+      </svg>
+      <div id="loading" class="loading"><span class="spinner"></span><p>打开她的小房间…</p></div>
+      <div class="room-hint"><span class="click-dot"></span><span id="hint">点窗下软垫看天，点地面指路，点床或书桌互动</span></div>
+      <div id="motion-stage" hidden>
+        <div class="stage-toolbar"><strong id="preview-title"></strong><button id="close-motion-stage" type="button" aria-label="关闭动作预览" title="关闭动作预览">×</button></div>
+        <svg viewBox="0 0 600 460" role="img" aria-labelledby="preview-title">
+          <ellipse cx="300" cy="405" rx="205" ry="14" fill="#dfeaf1"/>
+          <ellipse id="preview-shadow" class="shadow"/><g id="preview-pet"></g><g id="preview-effects"></g>
+        </svg>
+      </div>
+    </section>
+    <aside class="controls">
+      <div class="intro"><span class="eyebrow">MEET YOUR COMPANION</span><h2>今天，也一起<br>慢慢走吧。</h2></div>
+      <div class="pet-card"><div class="avatar"><img id="avatar" alt="蓝鲸桌宠头像"></div><div><h3>小蓝鲸</h3><p><i class="status-dot"></i><span id="status" role="status" aria-live="polite">正在准备</span></p></div><span class="heart">♡</span></div>
+      <button id="travel" class="travel-button" type="button" aria-controls="scene" disabled>去农场</button>
+      <div class="control-section scene-period">
+        <div class="section-label">
+          <div id="scene-period-label">深圳天色</div>
+          <output id="scene-period-status" aria-live="polite" aria-atomic="true"></output>
+        </div>
+        <div class="mode-switch scene-modes" role="group" aria-labelledby="scene-period-label">
+          <button type="button" data-scene-mode="auto" aria-pressed="true">自动</button>
+          <button type="button" data-scene-mode="day" aria-pressed="false">白天</button>
+          <button type="button" data-scene-mode="dusk" aria-pressed="false">黄昏</button>
+          <button type="button" data-scene-mode="dawn" aria-pressed="false">凌晨</button>
+        </div>
+        <dl class="solar-times" aria-label="深圳今日天文时刻，北京时间">
+          <div><dt>日出</dt><dd id="solar-sunrise"></dd></div>
+          <div><dt>日落</dt><dd id="solar-sunset"></dd></div>
+          <div><dt>天文暮光结束</dt><dd id="solar-nightfall"></dd></div>
+        </dl>
+      </div>
+      <div class="control-section">
+        <div class="section-label" id="activity-mode-label">活动方式</div>
+        <div class="mode-switch" role="group" aria-labelledby="activity-mode-label">
+          <button id="auto" class="selected" aria-pressed="true">自由活动</button>
+          <button id="manual" aria-pressed="false">点击指路</button>
+        </div>
+        <p id="activity-note" class="small-note">她会在地毯上休息、坐上窗边跳台看天，或去书桌用电脑。</p>
+      </div>
+      <div class="control-section"><div class="section-label">打个招呼 <span>SAY HELLO</span></div><div class="actions"><button data-action="wave"><span>✧</span>挥挥手</button><button data-action="love"><span>♡</span>比个心</button><button data-action="sit"><span>☾</span>坐一会</button></div></div>
+      <div class="control-section motion-preview">
+        <div class="section-label">
+          <label for="preview-motion">动作预览</label>
+          <output id="motion-preview-status" aria-live="polite"></output>
+        </div>
+        <div class="motion-preview-controls">
+          <select id="preview-motion"></select>
+          <button id="play-motion" type="button">播放</button>
+          <button id="stop-motion" type="button" hidden>结束预览</button>
+        </div>
+      </div>
+      <div class="control-section settings"><label for="speed">行走节奏 <output id="speed-value">悠闲</output></label><input id="speed" type="range" min="0.7" max="2.2" step="0.1" value="1.3" aria-label="行走节奏"><label for="scale">角色大小 <output id="scale-value">100%</output></label><input id="scale" type="range" min="0.7" max="1.3" step="0.05" value="1" aria-label="角色大小"></div>
+      <div class="bottom-controls"><button id="pause">Ⅱ 暂停</button><button id="reset">↺ 回到地毯</button></div>
+      <label class="debug-toggle"><input type="checkbox" id="debug">显示行走范围与路线</label>
+    </aside>
+  </div>
+  <footer><span>一方小天地，一点小陪伴。</span><span>原场景 · 原桌宠素材 <b>／</b> 本地互动演示</span></footer>
+</main>
+<script>/* DATA */</script>
+<script>/* APP */</script>
+</body>
+</html>

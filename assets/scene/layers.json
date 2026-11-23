@@ -1,0 +1,782 @@
+{
+  "width": 2048,
+  "height": 2048,
+  "depth": 8,
+  "mode": 3,
+  "layers": [
+    {
+      "index": 0,
+      "name": "云朵休闲坐墩",
+      "x": 0,
+      "y": 0,
+      "width": 2048,
+      "height": 2048,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": false,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        2048,
+        2048
+      ],
+      "file": "layer-00.png"
+    },
+    {
+      "index": 1,
+      "name": "展示底色｜可关闭导出透明",
+      "x": 0,
+      "y": 0,
+      "width": 2048,
+      "height": 2048,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        2048,
+        2048
+      ],
+      "file": "layer-01.png"
+    },
+    {
+      "index": 2,
+      "name": "地台外部投影",
+      "x": 0,
+      "y": 0,
+      "width": 2048,
+      "height": 2048,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        117,
+        951,
+        1963,
+        1919
+      ],
+      "file": "layer-02.png"
+    },
+    {
+      "index": 3,
+      "name": "完整空房｜双墙·窗户·地板",
+      "x": 124,
+      "y": 165,
+      "width": 1800,
+      "height": 1704,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        1800,
+        1704
+      ],
+      "file": "layer-03.png"
+    },
+    {
+      "index": 4,
+      "name": "DeepSeek 娘主题挂画｜独立阴影",
+      "x": 0,
+      "y": 0,
+      "width": 2048,
+      "height": 2048,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        1293,
+        616,
+        1593,
+        1030
+      ],
+      "file": "layer-04.png"
+    },
+    {
+      "index": 5,
+      "name": "DeepSeek 娘主题挂画｜本体",
+      "x": 1300,
+      "y": 620,
+      "width": 270,
+      "height": 392,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        270,
+        392
+      ],
+      "file": "layer-05.png"
+    },
+    {
+      "index": 6,
+      "name": "月亮灯床头柜｜独立阴影",
+      "x": 1394,
+      "y": 1198,
+      "width": 190,
+      "height": 96,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        190,
+        96
+      ],
+      "file": "layer-06.png"
+    },
+    {
+      "index": 7,
+      "name": "月亮灯床头柜｜本体",
+      "x": 1403,
+      "y": 962,
+      "width": 165,
+      "height": 285,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        165,
+        285
+      ],
+      "file": "layer-07.png"
+    },
+    {
+      "index": 8,
+      "name": "鲸鱼地毯｜独立阴影",
+      "x": 638,
+      "y": 1213,
+      "width": 778,
+      "height": 336,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        778,
+        336
+      ],
+      "file": "layer-08.png"
+    },
+    {
+      "index": 9,
+      "name": "鲸鱼地毯｜本体",
+      "x": 640,
+      "y": 1210,
+      "width": 760,
+      "height": 324,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        760,
+        324
+      ],
+      "file": "layer-09.png"
+    },
+    {
+      "index": 10,
+      "name": "蓝白陶盆绿植｜独立阴影",
+      "x": -54,
+      "y": 22,
+      "width": 2048,
+      "height": 2048,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        255,
+        1336,
+        369,
+        1406
+      ],
+      "file": "layer-10.png"
+    },
+    {
+      "index": 11,
+      "name": "蓝白陶盆绿植｜本体",
+      "x": 176,
+      "y": 1132,
+      "width": 145,
+      "height": 266,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        145,
+        266
+      ],
+      "file": "layer-11.png"
+    },
+    {
+      "index": 12,
+      "name": "蓝白云朵床·鲸鱼抱枕｜独立阴影",
+      "x": 76,
+      "y": 44,
+      "width": 2048,
+      "height": 2048,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        1114,
+        1245,
+        1835,
+        1560
+      ],
+      "file": "layer-12.png"
+    },
+    {
+      "index": 13,
+      "name": "蓝白云朵床·鲸鱼抱枕｜本体",
+      "x": 1196,
+      "y": 1046,
+      "width": 700,
+      "height": 524,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        700,
+        524
+      ],
+      "file": "layer-13.png"
+    },
+    {
+      "index": 14,
+      "name": "</Layer group>",
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "lsct"
+      ],
+      "maskLength": 0,
+      "section": 3
+    },
+    {
+      "index": 15,
+      "name": "下层踏板｜墙面投影",
+      "x": 890,
+      "y": 890,
+      "width": 142,
+      "height": 99,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        15,
+        24,
+        121,
+        87
+      ],
+      "file": "perch-low-shadow.png"
+    },
+    {
+      "index": 16,
+      "name": "下层踏板｜本体",
+      "x": 913,
+      "y": 913,
+      "width": 96,
+      "height": 53,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        96,
+        53
+      ],
+      "file": "perch-low.png"
+    },
+    {
+      "index": 17,
+      "name": "中层踏板｜墙面投影",
+      "x": 810,
+      "y": 817,
+      "width": 148,
+      "height": 103,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        15,
+        24,
+        127,
+        91
+      ],
+      "file": "perch-middle-shadow.png"
+    },
+    {
+      "index": 18,
+      "name": "中层踏板｜本体",
+      "x": 833,
+      "y": 840,
+      "width": 102,
+      "height": 57,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        102,
+        57
+      ],
+      "file": "perch-middle.png"
+    },
+    {
+      "index": 19,
+      "name": "窗边观景台｜墙面投影",
+      "x": 618,
+      "y": 724,
+      "width": 268,
+      "height": 180,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        11,
+        24,
+        251,
+        175
+      ],
+      "file": "perch-lookout-shadow.png"
+    },
+    {
+      "index": 20,
+      "name": "窗边观景台｜本体",
+      "x": 641,
+      "y": 747,
+      "width": 222,
+      "height": 134,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        222,
+        134
+      ],
+      "file": "perch-lookout.png"
+    },
+    {
+      "index": 21,
+      "name": "窗边壁挂猫跳台",
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "lsct"
+      ],
+      "maskLength": 0,
+      "section": 2
+    },
+    {
+      "index": 22,
+      "name": "窗边书桌·电脑·台灯｜独立阴影",
+      "x": 0,
+      "y": 0,
+      "width": 2048,
+      "height": 2048,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        299,
+        1134,
+        901,
+        1370
+      ],
+      "file": "layer-14.png"
+    },
+    {
+      "index": 23,
+      "name": "窗边书桌·电脑·台灯｜本体",
+      "x": 300,
+      "y": 849,
+      "width": 600,
+      "height": 504,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        600,
+        504
+      ],
+      "file": "layer-15.png"
+    },
+    {
+      "index": 24,
+      "name": "云朵座椅｜独立阴影",
+      "x": 576,
+      "y": 1298,
+      "width": 242,
+      "height": 110,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        242,
+        110
+      ],
+      "file": "layer-16.png"
+    },
+    {
+      "index": 25,
+      "name": "云朵座椅｜本体",
+      "x": 571,
+      "y": 1068,
+      "width": 230,
+      "height": 305,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        230,
+        305
+      ],
+      "file": "layer-17.png"
+    },
+    {
+      "index": 26,
+      "name": "鲸鱼书柜｜独立阴影",
+      "x": 0,
+      "y": 0,
+      "width": 2048,
+      "height": 2048,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        1015,
+        994,
+        1261,
+        1120
+      ],
+      "file": "layer-18.png"
+    },
+    {
+      "index": 27,
+      "name": "鲸鱼书柜｜本体",
+      "x": 1020,
+      "y": 501,
+      "width": 235,
+      "height": 600,
+      "blend": "norm",
+      "opacity": 255,
+      "visible": true,
+      "additionalKeys": [
+        "luni",
+        "lyid",
+        "clbl",
+        "infx",
+        "knko",
+        "lspf",
+        "lclr",
+        "shmd",
+        "fxrp"
+      ],
+      "maskLength": 0,
+      "alphaBBox": [
+        0,
+        0,
+        235,
+        600
+      ],
+      "file": "layer-19.png"
+    }
+  ]
+}

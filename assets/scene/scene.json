@@ -1,0 +1,104 @@
+{
+  "width": 2048,
+  "height": 2048,
+  "source": "蓝白鲸语_白天.psd",
+  "composite": "composite.png",
+  "base": "base.png",
+  "emptyRoom": "empty-room.png",
+  "baseDescription": "Room, wall picture, rug, wall perches and shadows. Floor furniture bodies are separate for depth ordering.",
+  "floorPolygon": [
+    [
+      1024,
+      990
+    ],
+    [
+      1886,
+      1380
+    ],
+    [
+      1026,
+      1813
+    ],
+    [
+      158,
+      1380
+    ]
+  ],
+  "furniture": [
+    {
+      "index": 7,
+      "name": "月亮灯床头柜｜本体",
+      "x": 1403,
+      "y": 962,
+      "width": 165,
+      "height": 285,
+      "file": "layer-07.png",
+      "id": "nightstand",
+      "suggestedFootY": 1247
+    },
+    {
+      "index": 11,
+      "name": "蓝白陶盆绿植｜本体",
+      "x": 176,
+      "y": 1132,
+      "width": 145,
+      "height": 266,
+      "file": "layer-11.png",
+      "id": "plant",
+      "suggestedFootY": 1398
+    },
+    {
+      "index": 13,
+      "name": "蓝白云朵床·鲸鱼抱枕｜本体",
+      "x": 1196,
+      "y": 1046,
+      "width": 700,
+      "height": 524,
+      "file": "layer-13.png",
+      "id": "bed",
+      "suggestedFootY": 1570
+    },
+    {
+      "index": 23,
+      "name": "窗边书桌·电脑·台灯｜本体",
+      "x": 300,
+      "y": 849,
+      "width": 600,
+      "height": 504,
+      "file": "layer-15.png",
+      "id": "desk",
+      "suggestedFootY": 1353
+    },
+    {
+      "index": 25,
+      "name": "云朵座椅｜本体",
+      "x": 571,
+      "y": 1068,
+      "width": 230,
+      "height": 305,
+      "file": "layer-17.png",
+      "id": "chair",
+      "suggestedFootY": 1373
+    },
+    {
+      "index": 27,
+      "name": "鲸鱼书柜｜本体",
+      "x": 1020,
+      "y": 501,
+      "width": 235,
+      "height": 600,
+      "file": "layer-19.png",
+      "id": "bookshelf",
+      "suggestedFootY": 1101
+    }
+  ],
+  "verification": {
+    "reconstructedVsMergedMeanChannelDifference": 0.0,
+    "maxChannelDifference": 0,
+    "layerOrder": "bottom-to-top",
+    "candidateMeanErrors": [
+      0.0,
+      11.265601634979248
+    ]
+  }
+}

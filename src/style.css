@@ -22,6 +22,33 @@
 .travel-button:disabled { cursor: wait; opacity: .6; }
 .farm-scene #scene { min-height: 0; }
 .farm-scene #actor { mask: none; }
+.farm-scene .room-hint { left: 14px; bottom: 12px; transform: none; pointer-events: none; }
+#farm-plot-status:empty, #farm-plot-status:not(:empty) + #hint { display: none; }
+#farm-plots path, #farm-plot-selection {
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+}
+#farm-plots [data-plot-id] {
+  fill: transparent;
+  pointer-events: fill;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (hover: hover) {
+  #farm-plots [data-plot-id]:hover { fill: #ffe8a52c; }
+}
+#farm-plots [data-plot-id]:focus-visible {
+  stroke: white;
+  stroke-dasharray: 3 3;
+  stroke-width: 2px;
+}
+#farm-plots [data-plot-id][aria-pressed="true"] { fill: #ffe4a0; fill-opacity: .18; }
+#farm-plot-selection {
+  fill: none;
+  stroke: #ffecaa;
+  stroke-width: 2px;
+}
 .farm-scene .room-label {
   background: #ffffffe6;
   padding: 8px 12px;
@@ -29,7 +56,7 @@
 }
 @media (max-width: 740px) {
   .travel-button { grid-column: 1 / -1; margin-top: 0; min-height: 44px; }
-  .farm-scene .room-hint { font-size: 8px; padding: 6px 9px; letter-spacing: 0; }
+  .farm-scene .room-hint { left: 8px; bottom: 8px; font-size: 10px; padding: 5px 8px; letter-spacing: 0; }
 }
 .solar-times {
   display: grid;

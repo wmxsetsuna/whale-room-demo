@@ -6,6 +6,7 @@ import { createFurnitureHitTest, createDeskPetHitTest } from './furniture-hit.js
 import { createDeskLoop, loadDeskFrames } from './desk-loop.js';
 import { createAtlasPlayer } from './atlas-player.js';
 import { initMotionPreview } from './motion-preview.js';
+import { initFarmPlots } from './farm-plots.js';
 import { chooseActivity } from './free-activities.js';
 import { FLOOR, OBSTACLES, WAYPOINTS, SPAWN, ROOM_NAVIGATION, configureNavigation, findPath, isWalkable, nearestWalkable, navigationStats } from './navigation.js';
 
@@ -13,6 +14,7 @@ const $ = s => document.querySelector(s);
 const NS = 'http://www.w3.org/2000/svg';
 const data = window.ROOM_DATA;
 const scene = $('#scene');
+const farmPlots = initFarmPlots(data.farm.plots);
 let ctl, route = [], goal = null, walkId = 0, waiting = 2.5, auto = true, paused = false, scale = 1, pace = 1.3;
 let bubbleTime = 0, activeStep = false, nextStep = false, lastTime = 0, elapsed = 0, failed = false;
 const masks = [];
@@ -57,7 +59,7 @@ let places = roomPlaces;
 let activity = null;
 let previousActivity = null;
 const roomHint = $('#hint').textContent;
-const farmHint = '点石板路指路，陪她在菜园走走';
+const farmHint = '点土地选地块，点小路指路';
 const roomActivityNote = $('#activity-note').textContent;
 let defaultHint = roomHint;
 let deskState = 'idle';
@@ -537,6 +539,7 @@ function greetOnFloor(action) {
 }
 
 function resetPet() {
+  farmPlots.clear();
   activity = null;
   previousActivity = null;
   perchState = 'ground';
@@ -584,11 +587,13 @@ function changeLocation() {
   defaultHint = farm ? farmHint : roomHint;
   scene.setAttribute('viewBox', farm ? data.farm.viewBox.join(' ') : '80 110 1880 1790');
   scene.setAttribute('aria-label', defaultHint);
-  $('.room-panel').setAttribute('aria-label', farm ? '鲸蓝菜园' : '蓝白鲸语房间');
+  scene.setAttribute('role', farm ? 'group' : 'img');
+  setHidden($('#farm-plots'), !farm);
+  $('.room-panel').setAttribute('aria-label', farm ? '大肥鱼的菜园' : '蓝白鲸语房间');
   $('.room-panel').classList.toggle('farm-scene', farm);
   $('#room-image').setAttribute('width', farm ? data.farm.width : data.scene.width);
   $('#room-image').setAttribute('height', farm ? data.farm.height : data.scene.height);
-  $('#location-label').textContent = farm ? '鲸蓝菜园' : '她的小房间';
+  $('#location-label').textContent = farm ? '大肥鱼的菜园' : '她的小房间';
   $('#travel').textContent = farm ? '回房间' : '去农场';
   $('#reset').textContent = farm ? '↺ 回到入口' : '↺ 回到地毯';
   $('#activity-note').textContent = farm ? '她会去田边看菜园、在池边看天，或找个地方歇歇。' : roomActivityNote;
@@ -640,6 +645,7 @@ async function init() {
   });
   scene.addEventListener('click',event=>{
     if (preview.motion) return;
+    farmPlots.clear();
     const p=eventPoint(event);
     const furniture = locationId === 'room' && hitFurniture(p);
     if (furniture && masks.find(mask => mask.id === furniture).visible) {
@@ -653,9 +659,9 @@ async function init() {
     if(locationId === 'room' && (p.y<990||p.y>1840||p.x<150||p.x>1900)){say('点一下房间里的地面吧');return;}
     const snapped=nearestWalkable(p);
     const snapDistance = locationId === 'farm' ? 55 : 160;
-    if(!snapped||Math.hypot(p.x-snapped.x,p.y-snapped.y)>snapDistance){say(locationId === 'farm' ? '沿着石板路走吧' : '那里放着家具呢');return;}
+    if(!snapped||Math.hypot(p.x-snapped.x,p.y-snapped.y)>snapDistance){say(locationId === 'farm' ? '沿着小路走吧' : '那里放着家具呢');return;}
     walkTo(snapped,true);
-    if(!isWalkable(p))$('#hint').textContent=locationId === 'farm' ? '走到旁边的石板路上' : '目标在家具附近，走到旁边的空地';
+    if(!isWalkable(p))$('#hint').textContent=locationId === 'farm' ? '走到旁边的小路上' : '目标在家具附近，走到旁边的空地';
     else $('#hint').textContent='收到，这就过去';
   });
   function changeWalkMode(on) {
@@ -705,7 +711,7 @@ async function init() {
   document.addEventListener('visibilitychange',()=>{lastTime=0;});
   // A read-only snapshot plus explicit local commands keep the demo inspectable.
   window.roomDemo={
-    snapshot:()=>({ready:true,location:locationId,position:position(),mode:ctl.pet.mode,bedState,deskState,perchState,deskLoopFrame:deskLoop.frame,furnitureFlashFrame:furnitureFlash.frame,auto,paused,activity:activity && {...activity},goal,route:route.map(p=>({...p})),scale,pace,sceneMode,scenePeriod,shenzhenPeriod,previewMotion:preview.motion,previewMode:preview.mode,previewDeskLoopFrame:preview.deskLoopFrame,walkable:isWalkable(position()),occludedBy:masks.filter(m=>m.visible).map(m=>m.id)}),
+    snapshot:()=>({ready:true,location:locationId,selectedPlot:farmPlots.selectedId,position:position(),mode:ctl.pet.mode,bedState,deskState,perchState,deskLoopFrame:deskLoop.frame,furnitureFlashFrame:furnitureFlash.frame,auto,paused,activity:activity && {...activity},goal,route:route.map(p=>({...p})),scale,pace,sceneMode,scenePeriod,shenzhenPeriod,previewMotion:preview.motion,previewMode:preview.mode,previewDeskLoopFrame:preview.deskLoopFrame,walkable:isWalkable(position()),occludedBy:masks.filter(m=>m.visible).map(m=>m.id)}),
     goTo:(x,y)=>walkTo({x,y},true),greet,stats:navigationStats,
     setAuto:on=>changeWalkMode(!!on),pause:on=>{paused=!!on;setStatus();}
   };

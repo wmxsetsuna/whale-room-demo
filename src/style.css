@@ -21,10 +21,13 @@
 .travel-button:hover { background: #d4e5f1; }
 .travel-button:disabled { cursor: wait; opacity: .6; }
 .farm-scene #scene { min-height: 0; }
-.farm-scene #actor { mask: none; }
+#farm-art { isolation: isolate; }
+#farm-blend { mix-blend-mode: plus-lighter; }
+.farm-scene #actor { mask: url(#farm-occlusion); }
 .farm-scene .room-hint { left: 14px; bottom: 12px; transform: none; pointer-events: none; }
 #farm-plot-status:empty, #farm-plot-status:not(:empty) + #hint { display: none; }
-#farm-plots path, #farm-plot-selection {
+.farm-plot-highlight {
+  fill: none;
   vector-effect: non-scaling-stroke;
   stroke-linejoin: round;
 }
@@ -36,17 +39,18 @@
   -webkit-tap-highlight-color: transparent;
 }
 @media (hover: hover) {
-  #farm-plots [data-plot-id]:hover { fill: #ffe8a52c; }
+  .farm-plot-highlight.hovered { fill: #ffe8a52c; }
 }
-#farm-plots [data-plot-id]:focus-visible {
+.farm-plot-highlight.keyboard-focus {
   stroke: white;
   stroke-dasharray: 3 3;
   stroke-width: 2px;
 }
-#farm-plots [data-plot-id][aria-pressed="true"] { fill: #ffe4a0; fill-opacity: .18; }
-#farm-plot-selection {
-  fill: none;
+.farm-plot-highlight.selected {
+  fill: #ffe4a0;
+  fill-opacity: .18;
   stroke: #ffecaa;
+  stroke-dasharray: none;
   stroke-width: 2px;
 }
 .farm-scene .room-label {
@@ -152,4 +156,40 @@
 @media (max-width: 740px) {
   .motion-preview { grid-column: 1 / -1; }
   .motion-preview-controls button, .motion-preview-controls select { min-height: 44px; }
+}
+
+.room-panel {
+  container-type: inline-size;
+  isolation: isolate;
+}
+.room-panel[data-sky="dawn"]:not(.farm-scene) .room-label b { color: #e3eaf4; }
+.room-hint { pointer-events: none; }
+.previewing #room-clock, .previewing #room-map { visibility: hidden; }
+.loading { z-index: 12; }
+@media (min-width: 741px) {
+  .room-panel {
+    position: sticky;
+    top: 16px;
+    align-self: start;
+  }
+  .room-panel #scene { aspect-ratio: 1080 / 599; }
+}
+@container (max-width: 600px) {
+  /* Keep the door plate and the current instruction within reach below the play area. */
+  #scene { margin-bottom: 58px; }
+  .room-hint, .farm-scene .room-hint {
+    left: 10px;
+    right: 150px;
+    bottom: 10px;
+    min-height: 38px;
+    padding: 5px 9px;
+    width: fit-content;
+    max-width: calc(100% - 160px);
+    transform: none;
+    white-space: normal;
+    line-height: 1.45;
+    letter-spacing: 0;
+  }
+  .click-dot { flex-shrink: 0; }
+  .farm-scene #scene { margin-top: 65px; }
 }

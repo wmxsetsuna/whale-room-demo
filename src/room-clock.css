@@ -1,0 +1,99 @@
+#room-clock {
+  --clock-paper: #fbf7ee;
+  --clock-blue: #9dbae4;
+  --clock-navy: #2c4a86;
+  position: absolute;
+  z-index: 2;
+  top: clamp(43px, 11%, 76px);
+  left: 1.667%;
+  width: var(--room-clock-size, clamp(94px, 19.26%, 225px));
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  pointer-events: none;
+  user-select: none;
+}
+
+#room-clock .clock-face {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 3px 4px rgb(30 52 100 / 25%));
+}
+
+#room-clock .clock-digits {
+  font-family: Bahnschrift, "DIN Alternate", "Segoe UI", sans-serif;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+#room-clock .clock-bell {
+  position: absolute;
+  right: -1%;
+  bottom: 2%;
+  display: block;
+  width: 12.5%;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  line-height: 0;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+#room-clock .clock-bell::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  min-width: 32px;
+  min-height: 32px;
+  width: 135%;
+  height: 135%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#room-clock .clock-bell svg { display: block; width: 100%; }
+#room-clock .clock-bell[aria-pressed="true"] .clock-slash { display: none; }
+#room-clock .clock-bell:focus-visible { outline: 2px dashed var(--clock-navy); outline-offset: 2px; }
+
+#room-clock .clock-scroll {
+  position: absolute;
+  left: -.96%;
+  top: 94.4%;
+  width: 106.73%;
+  aspect-ratio: 222 / 96;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path .6s cubic-bezier(.5, 0, .3, 1);
+}
+#room-clock.clock-announcing .clock-scroll { clip-path: inset(0); }
+#room-clock .clock-scroll svg {
+  display: block;
+  width: 97.3%;
+  overflow: visible;
+  filter: drop-shadow(0 3px 4px rgb(30 52 100 / 25%));
+  transform-origin: 50% 0;
+}
+#room-clock.clock-announcing .clock-scroll svg { animation: clock-scroll-swing 1.4s ease .45s; }
+#room-clock .clock-pulse { transform-box: fill-box; transform-origin: center; }
+#room-clock.clock-announcing .clock-pulse { animation: clock-paper-pulse 1.2s ease 2; }
+#room-clock .clock-announcement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.previewing #room-clock { visibility: hidden; }
+@keyframes clock-scroll-swing {
+  25% { transform: rotate(1.6deg); }
+  55% { transform: rotate(-1deg); }
+  80% { transform: rotate(.4deg); }
+}
+@keyframes clock-paper-pulse { 50% { transform: scale(1.35); } }
+@media (prefers-reduced-motion: reduce) {
+  #room-clock .clock-scroll { transition: none; }
+  #room-clock.clock-announcing .clock-scroll svg,
+  #room-clock.clock-announcing .clock-pulse { animation: none; }
+}

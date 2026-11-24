@@ -1,0 +1,162 @@
+#room-map {
+  --map-paper: #fbf7ee;
+  --map-blue: #9dbae4;
+  --map-ink: #2c4a86;
+  --map-shadow: rgba(30, 52, 100, .25);
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  container: room-map / size;
+  pointer-events: none;
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+#room-map .map-blue { fill: var(--map-blue); }
+#room-map .map-ink { fill: var(--map-ink); }
+#room-map .map-paper { fill: var(--map-paper); }
+
+.map-door, .map-plan {
+  --door-width: clamp(130px, 17.59cqw, 220px);
+  --door-right: clamp(10px, 1.67cqw, 22px);
+  --door-bottom: clamp(10px, 1.2cqw, 16px);
+  position: absolute;
+  right: var(--door-right);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+#room-map .map-door {
+  bottom: var(--door-bottom);
+  display: grid;
+  align-items: end;
+  width: var(--door-width);
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  box-shadow: none;
+  filter: drop-shadow(0 2px 3px var(--map-shadow));
+  pointer-events: auto;
+  transition: transform .18s;
+}
+
+.map-door > svg, .map-plan > svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+@media (hover: hover) {
+  #room-map .map-door:hover { transform: translateY(-2px); }
+}
+
+#room-map .map-door:focus-visible {
+  outline: 2px solid var(--map-ink);
+  outline-offset: 5px;
+}
+
+.map-door .map-arrow {
+  transition: transform .3s;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.map-door[aria-expanded="true"] .map-arrow { transform: rotate(180deg); }
+
+.map-plan {
+  width: min(clamp(190px, 19.63cqw, 244px), calc((100cqh - 76px) * .84));
+  bottom: calc(var(--door-bottom) + max(44px, var(--door-width) * .295) + 9px);
+  filter: drop-shadow(0 4px 6px var(--map-shadow));
+  transform-origin: 85% 100%;
+  transform: translateY(24px) scale(.6);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform .35s cubic-bezier(.3, 1.4, .5, 1), opacity .2s, visibility 0s .35s;
+}
+
+.map-door[aria-expanded="true"] + .map-plan {
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+.map-plan [data-map-room] { --cut: var(--map-paper); color: var(--map-ink); outline: none; }
+.map-plan [role="button"] { cursor: pointer; }
+.map-plan .map-floor { fill: var(--map-paper); transition: fill .2s; }
+.map-plan .map-symbol, .map-plan .map-name, .map-plan .map-soon { fill: currentColor; }
+.map-plan .map-cut { fill: var(--cut); }
+.map-plan .map-cut-line { fill: none; stroke: var(--cut); stroke-width: 1.1; stroke-linecap: round; }
+.map-plan text { user-select: none; }
+.map-plan .map-name { font-size: 10.5px; font-weight: 700; letter-spacing: 1.5px; text-anchor: middle; }
+.map-plan [data-map-room="farm"] .map-name { letter-spacing: .25px; }
+.map-plan .map-soon { font-size: 8px; letter-spacing: 1px; text-anchor: middle; }
+.map-plan .map-unavailable .map-name,
+.map-plan .map-unavailable .map-soon { opacity: .76; }
+.map-plan .map-unavailable .map-symbol { opacity: .55; }
+.map-plan .map-star { fill: var(--map-paper); visibility: hidden; }
+.map-plan .map-focus { fill: none; stroke: currentColor; stroke-width: 2; stroke-dasharray: 2 2; visibility: hidden; }
+.map-plan [data-map-room]:focus-visible .map-focus { visibility: visible; }
+
+@media (hover: hover) {
+  .map-plan [role="button"]:not([aria-current="location"]):hover .map-floor { fill: #dce7f7; }
+}
+
+.map-plan [aria-current="location"] { --cut: var(--map-ink); color: var(--map-paper); }
+.map-plan [aria-current="location"] .map-floor { fill: var(--map-ink); }
+.map-plan [aria-current="location"] .map-star { visibility: visible; }
+
+.map-blind { position: absolute; inset: 0; z-index: 1; pointer-events: auto; overflow: hidden; }
+.map-blind[hidden] { display: none; }
+.map-sheet {
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(100% + 20px);
+  transform: translateY(-105%);
+  transition: transform .55s cubic-bezier(.6, 0, .3, 1);
+}
+
+.map-blind.lowered .map-sheet { transform: translateY(0); }
+.map-sheet i {
+  position: absolute;
+  inset: 0;
+  mask: radial-gradient(13px at 50% 100%, transparent 12px, #000 13px) 0 0 / 26px 100% repeat-x;
+}
+
+.map-sheet i:first-child { background: var(--map-blue); transform: translateY(8px); }
+.map-sheet i:last-child {
+  background: var(--map-ink) radial-gradient(circle, var(--map-blue) 1.4px, transparent 1.9px) 0 0 / 26px 26px;
+}
+
+.map-blind svg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(94px, 13.89cqw, 175px);
+  transform: translate(-50%, -50%) scale(.85);
+  opacity: 0;
+  transition: transform .3s, opacity .3s;
+  filter: drop-shadow(0 4px 6px var(--map-shadow));
+}
+
+.map-blind.lowered svg {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  transition-delay: .35s;
+}
+
+/* On a short landscape scene, open beside the door so the whole plan fits. */
+@container room-map (max-height: 285px) {
+  .map-plan {
+    right: calc(var(--door-right) + var(--door-width) + 12px);
+    bottom: 7px;
+    width: min(190px, calc(100cqw - var(--door-width) - 34px), calc((100cqh - 15px) * .84));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #room-map *, #room-map *::before, #room-map *::after { transition: none; }
+}

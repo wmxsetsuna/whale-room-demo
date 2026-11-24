@@ -1,59 +1,82 @@
 export function initFarmPlots(plots) {
   const layer = document.getElementById('farm-plots');
-  const outline = document.getElementById('farm-plot-selection');
+  const highlights = document.getElementById('farm-plot-highlights');
   const status = document.getElementById('farm-plot-status');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let selected = null;
-  let pulse = null;
+  let pulseFrame;
 
-  function select(button, perimeter) {
-    selected?.setAttribute('aria-pressed', 'false');
-    selected = button;
-    button.setAttribute('aria-pressed', 'true');
-    outline.setAttribute('points', perimeter);
-    outline.removeAttribute('hidden');
-    status.textContent = '已选中' + button.getAttribute('aria-label');
-    pulse?.cancel();
-    if (!reducedMotion.matches) {
-      pulse = button.animate(
-        [{ fillOpacity: 0.57 }, { fillOpacity: 0.18 }],
-        { duration: 420, easing: 'ease-out' },
-      );
+  function pulse(paint) {
+    const start = performance.now();
+    function fade(now) {
+      const remaining = Math.max(0, 1 - (now - start) / 420);
+      if (remaining === 0) {
+        paint.style.removeProperty('fill-opacity');
+        return;
+      }
+      // Inline opacity propagates to every SVG use of this path during a time-of-day blend.
+      paint.style.fillOpacity = String(.18 + .39 * remaining ** 2);
+      pulseFrame = requestAnimationFrame(fade);
     }
+    fade(start);
   }
 
-  for (const { id, row, column, polygon, holes = [] } of plots) {
+  function select(button, paint) {
+    clear();
+    selected = { button, paint };
+    button.setAttribute('aria-pressed', 'true');
+    paint.classList.add('selected');
+    status.textContent = '已选中' + button.getAttribute('aria-label');
+    if (!reducedMotion.matches) pulse(paint);
+  }
+
+  function pathData(loops) {
+    return loops.map(loop => 'M ' + loop.map(point => point.join(',')).join(' ') + ' Z').join(' ');
+  }
+
+  for (const { id, row, column, polygon, outline, fragments = [], holes = [] } of plots) {
     const button = document.createElementNS(layer.namespaceURI, 'path');
     button.dataset.plotId = id;
-    const contours = [polygon, ...holes].map(loop => loop.map(point => point.join(',')).join(' '));
-    button.setAttribute('d', contours.map(points => `M ${points} Z`).join(' '));
+    // Only exposed soil accepts input. Its outline continues behind the scenery.
+    const hitPath = pathData([polygon, ...fragments, ...holes]);
+    button.setAttribute('d', hitPath);
     button.setAttribute('fill-rule', 'evenodd');
     button.setAttribute('role', 'button');
     button.setAttribute('tabindex', '0');
     button.setAttribute('aria-label', `第 ${row} 行第 ${column} 列土地`);
     button.setAttribute('aria-pressed', 'false');
+    const paint = document.createElementNS(layer.namespaceURI, 'path');
+    paint.classList.add('farm-plot-highlight');
+    paint.setAttribute('d', outline ? pathData([outline]) : hitPath);
+    paint.setAttribute('fill-rule', 'evenodd');
+    highlights.append(paint);
+    button.addEventListener('pointerenter', () => paint.classList.add('hovered'));
+    button.addEventListener('pointerleave', () => paint.classList.remove('hovered'));
+    button.addEventListener('focus', () => paint.classList.toggle('keyboard-focus', button.matches(':focus-visible')));
+    button.addEventListener('blur', () => paint.classList.remove('keyboard-focus'));
+    button.addEventListener('pointerdown', () => paint.classList.remove('keyboard-focus'));
     button.addEventListener('click', event => {
       event.stopPropagation();
-      select(button, contours[0]);
+      select(button, paint);
     });
     button.addEventListener('keydown', event => {
+      paint.classList.add('keyboard-focus');
       if (event.key !== 'Enter' && event.key !== ' ') return;
       event.preventDefault();
       event.stopPropagation();
-      if (!event.repeat) select(button, contours[0]);
+      if (!event.repeat) select(button, paint);
     });
-    outline.before(button);
+    layer.append(button);
   }
 
-  return {
-    get selectedId() { return selected?.dataset.plotId ?? null; },
-    clear() {
-      if (!selected) return;
-      pulse?.cancel();
-      selected.setAttribute('aria-pressed', 'false');
-      selected = null;
-      outline.setAttribute('hidden', '');
-      status.textContent = '';
-    },
-  };
+  function clear() {
+    if (!selected) return;
+    cancelAnimationFrame(pulseFrame);
+    selected.paint.style.removeProperty('fill-opacity');
+    selected.button.setAttribute('aria-pressed', 'false');
+    selected.paint.classList.remove('selected');
+    selected = null;
+    status.textContent = '';
+  }
+  return { get selectedId() { return selected?.button.dataset.plotId ?? null; }, clear };
 }

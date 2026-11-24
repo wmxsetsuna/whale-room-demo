@@ -2,11 +2,14 @@ import { createPet } from '../vendor/kit/body.js';
 import { createRig } from '../vendor/kit/rig.js';
 import { createWhaleFigure } from '../vendor/whale/figure.js';
 import { shenzhenSunSchedule } from './shenzhen-sun.js';
+import { initRoomClock } from './room-clock.js';
+import { initRoomMap } from './room-map.js';
 import { createFurnitureHitTest, createDeskPetHitTest } from './furniture-hit.js';
 import { createDeskLoop, loadDeskFrames } from './desk-loop.js';
 import { createAtlasPlayer } from './atlas-player.js';
 import { initMotionPreview } from './motion-preview.js';
 import { initFarmPlots } from './farm-plots.js';
+import { initFarmArt } from './farm-art.js';
 import { chooseActivity } from './free-activities.js';
 import { FLOOR, OBSTACLES, WAYPOINTS, SPAWN, ROOM_NAVIGATION, configureNavigation, findPath, isWalkable, nearestWalkable, navigationStats } from './navigation.js';
 
@@ -16,6 +19,8 @@ const data = window.ROOM_DATA;
 const scene = $('#scene');
 const farmPlots = initFarmPlots(data.farm.plots);
 let ctl, route = [], goal = null, walkId = 0, waiting = 2.5, auto = true, paused = false, scale = 1, pace = 1.3;
+const guidanceTimeoutMs = 3000;
+let resumeFreeActivityTimer;
 let bubbleTime = 0, activeStep = false, nextStep = false, lastTime = 0, elapsed = 0, failed = false;
 const masks = [];
 const svgNode = (tag, attrs) => { const el = document.createElementNS(NS, tag); for (const [k,v] of Object.entries(attrs)) el.setAttribute(k,v); return el; };
@@ -60,7 +65,6 @@ let activity = null;
 let previousActivity = null;
 const roomHint = $('#hint').textContent;
 const farmHint = '点土地选地块，点小路指路';
-const roomActivityNote = $('#activity-note').textContent;
 let defaultHint = roomHint;
 let deskState = 'idle';
 const bedLabels = {
@@ -73,15 +77,16 @@ let bedState = 'idle';
 let afterFurnitureExit = null;
 
 const roomPeriods = {
-  day: { label: '白天', image: 'scene/composite.png' },
-  dusk: { label: '黄昏', image: 'time-scenes/dusk.png' },
-  dawn: { label: '凌晨', image: 'time-scenes/dawn.png' },
+  day: { label: '白天', image: 'scene/composite.png', sky: '#f3f7fc' },
+  dusk: { label: '黄昏', image: 'time-scenes/dusk.png', sky: '#ecdfe6' },
+  dawn: { label: '凌晨', image: 'time-scenes/dawn.png', sky: '#222c48' },
 };
 const farmPeriods = {
-  day: { label: '白天', image: 'farm/day.png' },
-  dusk: { label: '傍晚', image: 'farm/dusk.png' },
-  dawn: { label: '晚上', image: 'farm/dawn.png' },
+  day: { label: '白天', sky: '#f2f6fb' },
+  dusk: { label: '傍晚', sky: '#f3e4e2' },
+  dawn: { label: '晚上', sky: '#27314e' },
 };
+let farmArt;
 let locationId = 'room';
 const sceneScale = () => locationId === 'farm' ? 0.55 : 1;
 const petScale = () => scale * sceneScale();
@@ -95,10 +100,57 @@ const beijingTime = new Intl.DateTimeFormat('zh-CN', {
 });
 let displayedSunDate;
 
+// Fade the original scene paintings across sunrise, sunset and the end of twilight.
+function sceneLighting(now, {sunrise, sunset, nightfall}) {
+  if (sceneMode === 'auto') {
+    const transitions = [
+      { at: sunrise, minutes: 25, from: 'dawn', to: 'day' },
+      { at: sunset, minutes: 25, from: 'day', to: 'dusk' },
+      { at: nightfall, minutes: 15, from: 'dusk', to: 'dawn' },
+    ];
+    for (const {at, minutes, from, to} of transitions) {
+      const half = minutes * 60000;
+      if (now >= at - half && now < at + half) {
+        return { from, to, mix: (now - at + half) / (2 * half) };
+      }
+    }
+  }
+  return { from: scenePeriod, to: scenePeriod, mix: 0 };
+}
+
+function paintRoom(from, to, mix) {
+  const setImage = (layer, file) => {
+    if (layer.dataset.file !== file) {
+      layer.setAttribute('href', data.images[file]);
+      layer.dataset.file = file;
+    }
+  };
+  setImage($('#room-image'), roomPeriods[from].image);
+  const blend = $('#room-blend');
+  if (from !== to) setImage(blend, roomPeriods[to].image);
+  blend.setAttribute('opacity', mix);
+}
+
+function paintScene(now, schedule) {
+  const { from, to, mix } = sceneLighting(now, schedule);
+  const farm = locationId === 'farm';
+  const periods = farm ? farmPeriods : roomPeriods;
+  if (farm) {
+    farmArt ??= initFarmArt(scene, data.farm, data.images);
+    farmArt.setLighting(from, to, mix);
+  } else {
+    paintRoom(from, to, mix);
+  }
+  const panel = $('.room-panel');
+  panel.dataset.sky = scenePeriod;
+  panel.style.backgroundColor = `color-mix(in srgb, ${periods[from].sky}, ${periods[to].sky} ${mix * 100}%)`;
+}
+
 function refreshRoomPeriod() {
   clearTimeout(clockTimer);
   const now = new Date();
-  const { dateKey, sunrise, sunset, nightfall, nextMidnight } = shenzhenSunSchedule(now);
+  const schedule = shenzhenSunSchedule(now);
+  const { dateKey, sunrise, sunset, nightfall, nextMidnight } = schedule;
   if (displayedSunDate !== dateKey) {
     for (const [id, time] of [['sunrise', sunrise], ['sunset', sunset], ['nightfall', nightfall]]) {
       $('#solar-' + id).textContent = beijingTime.format(time);
@@ -108,18 +160,15 @@ function refreshRoomPeriod() {
   if (now < sunrise || now >= nightfall) shenzhenPeriod = 'dawn';
   else if (now < sunset) shenzhenPeriod = 'day';
   else shenzhenPeriod = 'dusk';
-  const period = sceneMode === 'auto' ? shenzhenPeriod : sceneMode;
-  const { label, image } = (locationId === 'farm' ? farmPeriods : roomPeriods)[period];
-  if (period !== scenePeriod) {
-    $('#room-image').setAttribute('href', data.images[image]);
-    scenePeriod = period;
-  }
+  scenePeriod = sceneMode === 'auto' ? shenzhenPeriod : sceneMode;
+  const { label } = (locationId === 'farm' ? farmPeriods : roomPeriods)[scenePeriod];
+  paintScene(now.getTime(), schedule);
   const status = sceneMode === 'auto' ? `自动 · ${label}` : `手动 · ${label}`;
   const output = $('#scene-period-status');
   if (output.textContent !== status) output.textContent = status;
   const nextEvent = [sunrise, sunset, nightfall, nextMidnight].find(time => time > now);
   // Wake at the actual event and also catch changes to the device clock.
-  clockTimer = setTimeout(refreshRoomPeriod, Math.min(60000, nextEvent - now.getTime()));
+  clockTimer = setTimeout(refreshRoomPeriod, Math.min(10000, nextEvent - now.getTime()));
 }
 
 function initRoomPeriods() {
@@ -164,16 +213,27 @@ function say(text, seconds=2.6) {
   bubbleTime = seconds;
   setHidden($('#bubble'),false);
 }
-function setMode(on) {
-  if (activity && activity.id !== 'desk') clearBubble();
-  activity = null;
+function showWalkMode(on) {
   auto = on;
   $('#auto').classList.toggle('selected',auto);
   $('#manual').classList.toggle('selected',!auto);
   $('#auto').setAttribute('aria-pressed',String(auto));
   $('#manual').setAttribute('aria-pressed',String(!auto));
-  waiting = 1.2;
   setStatus();
+}
+function setMode(on) {
+  clearTimeout(resumeFreeActivityTimer);
+  if (activity && activity.id !== 'desk') clearBubble();
+  activity = null;
+  waiting = 1.2;
+  showWalkMode(on);
+  if (!on) {
+    resumeFreeActivityTimer = setTimeout(() => {
+      // Let the current route or furniture interaction reach its destination.
+      if (deskState === 'idle' && bedState === 'idle') waiting = 0;
+      showWalkMode(true);
+    }, guidanceTimeoutMs);
+  }
 }
 function clearRoute() {
   route=[]; activeStep=false; nextStep=false; goal=null;
@@ -280,7 +340,7 @@ function requestWindowSeat() {
   if (perchState === 'ascending' || perchState === 'watching') return;
   onFloor(() => {
     const p = windowSteps[0];
-    activity = {id:'window', phase:'walking'};
+    activity = {id:'window', phase:'walking', remaining:2.5};
     if (Math.hypot(ctl.pet.x-p.x, ctl.pet.gy-p.y) <= 2) startClimbing();
     else if (!walkOnFloor(p)) activity = null;
   });
@@ -406,7 +466,7 @@ function chooseNextActivity() {
 }
 
 function advanceFreeActivity(seconds) {
-  if (!auto || bedState !== 'idle' || deskState === 'leaving' || perchState === 'descending') return;
+  if (!auto || bedState === 'leaving' || deskState === 'leaving' || perchState === 'descending') return;
   if (activity) {
     if (activity.phase !== 'staying') return;
     activity.remaining = Math.max(0, activity.remaining - seconds);
@@ -414,9 +474,9 @@ function advanceFreeActivity(seconds) {
       activity = null;
       onFloor(chooseNextActivity);
     }
-  } else if (!activeStep && !nextStep && deskState === 'idle') {
+  } else if (!activeStep && !nextStep && furnitureFlash.frame === null && perchState !== 'ascending') {
     waiting -= seconds;
-    if (waiting <= 0) chooseNextActivity();
+    if (waiting <= 0) onFloor(chooseNextActivity);
   }
 }
 
@@ -495,6 +555,7 @@ function frontY(poly,x) {
 }
 function updateOcclusion() {
   const p=position();
+  if (locationId === 'farm') farmArt.update(p);
   const seated = onChair();
   $('#shadow').style.opacity = seated || perchState !== 'ground' ? '0' : '';
   setHidden(cushionShadow, perchState !== 'watching');
@@ -579,8 +640,9 @@ function createScenePet(figure) {
   });
 }
 
-function changeLocation() {
-  locationId = locationId === 'room' ? 'farm' : 'room';
+function changeLocation(destination) {
+  if (destination === locationId) return;
+  locationId = destination;
   const farm = locationId === 'farm';
   configureNavigation(farm ? data.farm.navigation : ROOM_NAVIGATION);
   places = farm ? farmPlaces : roomPlaces;
@@ -589,26 +651,25 @@ function changeLocation() {
   scene.setAttribute('aria-label', defaultHint);
   scene.setAttribute('role', farm ? 'group' : 'img');
   setHidden($('#farm-plots'), !farm);
+  setHidden($('#farm-art'), !farm);
+  setHidden($('#scene-art'), farm);
   $('.room-panel').setAttribute('aria-label', farm ? '大肥鱼的菜园' : '蓝白鲸语房间');
   $('.room-panel').classList.toggle('farm-scene', farm);
-  $('#room-image').setAttribute('width', farm ? data.farm.width : data.scene.width);
-  $('#room-image').setAttribute('height', farm ? data.farm.height : data.scene.height);
   $('#location-label').textContent = farm ? '大肥鱼的菜园' : '她的小房间';
   $('#travel').textContent = farm ? '回房间' : '去农场';
   $('#reset').textContent = farm ? '↺ 回到入口' : '↺ 回到地毯';
-  $('#activity-note').textContent = farm ? '她会去田边看菜园、在池边看天，或找个地方歇歇。' : roomActivityNote;
   for (const button of document.querySelectorAll('[data-scene-mode]')) {
     if (button.dataset.sceneMode !== 'auto') {
       button.textContent = (farm ? farmPeriods : roomPeriods)[button.dataset.sceneMode].label;
     }
   }
-  scenePeriod = undefined;
   refreshRoomPeriod();
   resetPet();
   drawDebug();
 }
 
 async function init() {
+  initRoomClock();
   initRoomPeriods();
   const [hitFurniture, hitDeskPet, deskFrames] = await Promise.all([
     createFurnitureHitTest(data.scene, data.images), createDeskPetHitTest(data), loadDeskFrames(),
@@ -638,6 +699,10 @@ async function init() {
   ctl=createScenePet(figure);
   ctl.render();updateOcclusion();setStatus();
   const preview = initMotionPreview(loadFigure, deskFrames);
+  const roomMap = initRoomMap({
+    getLocation: () => locationId,
+    travelTo: destination => { if (!preview.motion) changeLocation(destination); },
+  });
   $('#loading').hidden=true;
   scene.addEventListener('pointermove', event => {
     const p = eventPoint(event);
@@ -679,7 +744,9 @@ async function init() {
   $('#manual').onclick = () => changeWalkMode(false);
   $('#pause').onclick=()=>{paused=!paused;setStatus();};
   $('#travel').disabled = false;
-  $('#travel').onclick = () => { if (!preview.motion) changeLocation(); };
+  $('#travel').onclick = () => {
+    if (!preview.motion) roomMap.goTo(locationId === 'room' ? 'farm' : 'room');
+  };
   $('#reset').onclick=()=>{
     paused = false;
     resetPet();

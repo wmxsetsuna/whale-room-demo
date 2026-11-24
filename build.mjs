@@ -12,6 +12,7 @@ try{esbuild=require('esbuild');}catch{
 const read=p=>fs.readFile(path.join(root,p),'utf8');
 const scene=JSON.parse(await read('assets/scene/scene.json'));
 const farm=JSON.parse(await read('assets/farm/scene.json'));
+farm.layers=JSON.parse(await read('assets/farm/layers.json'));
 const model=JSON.parse(await read('vendor/whale/model.json'));
 const images={};
 async function image(key,file){images[key]='data:image/png;base64,'+(await fs.readFile(path.join(root,file))).toString('base64');}
@@ -21,8 +22,11 @@ for (const period of ['dusk', 'dawn']) {
   const filename = `time-scenes/${period}.png`;
   await image(filename, `assets/${filename}`);
 }
-for (const period of ['day', 'dusk', 'dawn']) {
-  await image(`farm/${period}.png`, `assets/farm/${period}.png`);
+for (const [period, layers] of Object.entries(farm.layers)) {
+  for (const {id} of layers) {
+    const file = `farm/layers/${period}/${id}.png`;
+    await image(file, `assets/${file}`);
+  }
 }
 for(const f of scene.furniture)await image(`scene/${f.file}`,`assets/scene/${f.file}`);
 for(const dir of ['tex','feat'])for(const file of await fs.readdir(path.join(root,'vendor/whale',dir)))if(file.endsWith('.png'))await image(`whale/${dir}/${file}`,`vendor/whale/${dir}/${file}`);
@@ -41,6 +45,7 @@ const result=await esbuild.build({entryPoints:[path.join(root,'src/app.js')],bun
 const js=result.outputFiles[0].text.replaceAll('</script','<\\/script');
 const data=JSON.stringify({scene,farm,model,images,deskSeat,furnitureFlash}).replaceAll('<','\\u003c');
 const template=await read('index.template.html');
-const html=template.replace('/* STYLE */',await read('src/style.css')).replace('/* DATA */',()=>`window.ROOM_DATA=${data};`).replace('/* APP */',()=>js);
+const styles=await Promise.all(['src/style.css','src/room-clock.css','src/room-map.css'].map(read));
+const html=template.replace('/* STYLE */',()=>styles.join('\n')).replace('/* DATA */',()=>`window.ROOM_DATA=${data};`).replace('/* APP */',()=>js);
 await fs.writeFile(path.join(root,'蓝白鲸语-行走Demo.html'),html);
 console.log(`Built offline demo (${(Buffer.byteLength(html)/1024/1024).toFixed(2)} MB).`);

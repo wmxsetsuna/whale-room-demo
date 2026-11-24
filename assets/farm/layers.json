@@ -1,0 +1,246 @@
+{
+  "day": [
+    {
+      "id": "base",
+      "x": 156,
+      "y": 84,
+      "width": 1401,
+      "height": 977
+    },
+    {
+      "id": "paths",
+      "x": 305,
+      "y": 417,
+      "width": 743,
+      "height": 344
+    },
+    {
+      "id": "bed1",
+      "x": 577,
+      "y": 344,
+      "width": 291,
+      "height": 158
+    },
+    {
+      "id": "bed2",
+      "x": 745,
+      "y": 420,
+      "width": 313,
+      "height": 196
+    },
+    {
+      "id": "bed3",
+      "x": 404,
+      "y": 413,
+      "width": 298,
+      "height": 169
+    },
+    {
+      "id": "bed4",
+      "x": 580,
+      "y": 500,
+      "width": 312,
+      "height": 205
+    },
+    {
+      "id": "bed5",
+      "x": 276,
+      "y": 488,
+      "width": 260,
+      "height": 213
+    },
+    {
+      "id": "bed6",
+      "x": 393,
+      "y": 581,
+      "width": 338,
+      "height": 204
+    },
+    {
+      "id": "pond",
+      "x": 770,
+      "y": 580,
+      "width": 578,
+      "height": 303
+    },
+    {
+      "id": "hydrangea",
+      "x": 276,
+      "y": 555,
+      "width": 42,
+      "height": 71
+    },
+    {
+      "id": "mail",
+      "x": 277,
+      "y": 442,
+      "width": 104,
+      "height": 225
+    }
+  ],
+  "dusk": [
+    {
+      "id": "base",
+      "x": 156,
+      "y": 84,
+      "width": 1401,
+      "height": 977
+    },
+    {
+      "id": "paths",
+      "x": 305,
+      "y": 417,
+      "width": 743,
+      "height": 344
+    },
+    {
+      "id": "bed1",
+      "x": 582,
+      "y": 347,
+      "width": 282,
+      "height": 155
+    },
+    {
+      "id": "bed2",
+      "x": 745,
+      "y": 419,
+      "width": 309,
+      "height": 196
+    },
+    {
+      "id": "bed3",
+      "x": 407,
+      "y": 415,
+      "width": 295,
+      "height": 167
+    },
+    {
+      "id": "bed4",
+      "x": 580,
+      "y": 500,
+      "width": 311,
+      "height": 205
+    },
+    {
+      "id": "bed5",
+      "x": 276,
+      "y": 488,
+      "width": 260,
+      "height": 213
+    },
+    {
+      "id": "bed6",
+      "x": 391,
+      "y": 581,
+      "width": 340,
+      "height": 203
+    },
+    {
+      "id": "pond",
+      "x": 769,
+      "y": 572,
+      "width": 582,
+      "height": 310
+    },
+    {
+      "id": "hydrangea",
+      "x": 276,
+      "y": 555,
+      "width": 42,
+      "height": 71
+    },
+    {
+      "id": "mail",
+      "x": 277,
+      "y": 442,
+      "width": 104,
+      "height": 225
+    }
+  ],
+  "dawn": [
+    {
+      "id": "base",
+      "x": 156,
+      "y": 84,
+      "width": 1401,
+      "height": 977
+    },
+    {
+      "id": "paths",
+      "x": 305,
+      "y": 417,
+      "width": 743,
+      "height": 344
+    },
+    {
+      "id": "bed1",
+      "x": 577,
+      "y": 344,
+      "width": 297,
+      "height": 158
+    },
+    {
+      "id": "bed2",
+      "x": 745,
+      "y": 414,
+      "width": 315,
+      "height": 204
+    },
+    {
+      "id": "bed3",
+      "x": 428,
+      "y": 413,
+      "width": 274,
+      "height": 169
+    },
+    {
+      "id": "bed4",
+      "x": 580,
+      "y": 500,
+      "width": 312,
+      "height": 200
+    },
+    {
+      "id": "bed5",
+      "x": 276,
+      "y": 499,
+      "width": 260,
+      "height": 202
+    },
+    {
+      "id": "bed6",
+      "x": 393,
+      "y": 581,
+      "width": 336,
+      "height": 203
+    },
+    {
+      "id": "pond",
+      "x": 776,
+      "y": 572,
+      "width": 572,
+      "height": 304
+    },
+    {
+      "id": "hydrangea",
+      "x": 276,
+      "y": 555,
+      "width": 42,
+      "height": 71
+    },
+    {
+      "id": "mail",
+      "x": 277,
+      "y": 442,
+      "width": 104,
+      "height": 225
+    },
+    {
+      "id": "fireflies",
+      "x": 295,
+      "y": 315,
+      "width": 1180,
+      "height": 585
+    }
+  ]
+}

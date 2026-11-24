@@ -4,7 +4,7 @@
  * describe their floor footprints, so a pet may correctly pass behind art.
  * No generated scene geometry or external navigation dependency is used.
  */
-export const CLEARANCE = 20;
+export let CLEARANCE = 20;
 export let FLOOR = [[1024, 990], [1886, 1380], [1026, 1813], [158, 1380]];
 export let SPAWN = { x: 1000, y: 1390 };
 
@@ -33,6 +33,8 @@ export let WAYPOINTS = [
 ];
 
 export const ROOM_NAVIGATION = {
+  clearance: CLEARANCE,
+  gridStep: 18,
   floorPolygon: FLOOR,
   obstacles: OBSTACLES,
   waypoints: WAYPOINTS,
@@ -48,7 +50,7 @@ const xy = p => ({ x:p[0], y:p[1] });
 const edges = polygon => polygon.map((p,i) => [xy(p),xy(polygon[(i+1)%polygon.length])]);
 let floorEdges = edges(FLOOR);
 let obstacleEdges = OBSTACLES.map(o => edges(o.polygon));
-const margin2 = CLEARANCE * CLEARANCE;
+let margin2 = CLEARANCE * CLEARANCE;
 
 function inside(p, polygon) {
   let hit = false;
@@ -82,7 +84,7 @@ function segmentDistance2(a,b,c,d) {
     pointSegmentDistance2(c,a,b),pointSegmentDistance2(d,a,b));
 }
 
-/** Whether the pet's foot anchor has full 20 px clearance from solid geometry. */
+/** Whether the pet's foot anchor has the active scene's clearance from solid geometry. */
 export function isWalkable(point) {
   const p=asPoint(point);
   if (!finite(p)||!inside(p,FLOOR)) return false;
@@ -106,12 +108,15 @@ export function segmentWalkable(from,to) {
   return true;
 }
 
-const STEP=18;
+let gridStep = ROOM_NAVIGATION.gridStep;
 let gridBounds = ROOM_NAVIGATION.gridBounds;
 let graph=null;
 
 /** Replace the active scene geometry and invalidate its derived navigation data. */
 export function configureNavigation(config = ROOM_NAVIGATION) {
+  CLEARANCE = config.clearance ?? ROOM_NAVIGATION.clearance;
+  margin2 = CLEARANCE * CLEARANCE;
+  gridStep = config.gridStep ?? ROOM_NAVIGATION.gridStep;
   FLOOR = config.floorPolygon;
   OBSTACLES = config.obstacles;
   WAYPOINTS = config.waypoints;
@@ -131,8 +136,8 @@ function getGraph() {
   if (graph) return graph;
   const { minX, minY, maxX, maxY } = gridBounds;
   const nodes=[],lookup=new Map();
-  for (let gy=0,y=minY;y<=maxY;gy++,y+=STEP) {
-    for (let gx=0,x=minX;x<=maxX;gx++,x+=STEP) {
+  for (let gy=0,y=minY;y<=maxY;gy++,y+=gridStep) {
+    for (let gx=0,x=minX;x<=maxX;gx++,x+=gridStep) {
       if (!isWalkable({x,y})) continue;
       const n={id:nodes.length,x,y,gx,gy,links:[],component:-1};
       nodes.push(n);lookup.set(`${gx},${gy}`,n);
@@ -254,6 +259,6 @@ export function randomDestination(from,random=Math.random) {
 }
 
 export function navigationStats() {
-  const g=getGraph();return {gridStep:STEP,clearance:CLEARANCE,nodes:g.nodes.length,
+  const g=getGraph();return {gridStep,clearance:CLEARANCE,nodes:g.nodes.length,
     reachableNodes:g.main.length,componentSizes:g.components.map(c=>c.length)};
 }

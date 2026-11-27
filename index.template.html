@@ -7,6 +7,42 @@
 <style>/* STYLE */</style>
 </head>
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <!-- 种子袋：天蓝错位底纸 + 米白袋身 + 藏青锯齿折口 -->
+      <symbol id="bag" viewBox="0 0 120 152">
+        <path fill="#A8C3EC" transform="translate(4 5)" d="M22 34 L98 34 L104 128 Q104 134 98 134 L22 134 Q16 134 16 128 Z"/>
+        <path fill="#FBF6EA" d="M22 34 L98 34 L104 128 Q104 134 98 134 L22 134 Q16 134 16 128 Z"/>
+        <path fill="none" stroke="#A8C3EC" stroke-width="1.6" stroke-dasharray="3 3" d="M24 126 L96 126"/>
+        <path fill="#2B4583" d="M20 18 Q20 14 24 14 L96 14 Q100 14 100 18 L100 38 L95 42 L90 38 L85 42 L80 38 L75 42 L70 38 L65 42 L60 38 L55 42 L50 38 L45 42 L40 38 L35 42 L30 38 L25 42 L20 38 Z"/>
+        <path fill="none" stroke="#FBF6EA" stroke-width="1.4" stroke-dasharray="3 3" d="M26 24 L94 24"/>
+        <circle cx="60" cy="31" r="2.4" fill="#A8C3EC"/>
+      </symbol>
+
+      <!-- Each view frames one complete packet and its loose seeds in the original artwork. -->
+      <image id="seed-packet-sheet" width="2172" height="724"/>
+      <symbol id="crop-carrot" viewBox="13 135 348 463"><use href="#seed-packet-sheet"/></symbol>
+      <symbol id="crop-tomato" viewBox="373 135 348 463"><use href="#seed-packet-sheet"/></symbol>
+      <symbol id="crop-cabbage" viewBox="732 135 348 463"><use href="#seed-packet-sheet"/></symbol>
+      <symbol id="crop-strawberry" viewBox="1087 135 348 463"><use href="#seed-packet-sheet"/></symbol>
+      <symbol id="crop-pumpkin" viewBox="1448 135 348 463"><use href="#seed-packet-sheet"/></symbol>
+      <symbol id="crop-blueberry" viewBox="1807 135 348 463"><use href="#seed-packet-sheet"/></symbol>
+
+      <!-- 小图标：嫩芽 -->
+      <symbol id="ico-sprout" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M11 22 V13 C11 9 8 6.5 3 6.5 C3 11 6 13.5 11 13.5 Z M13 22 V11 C13 6.5 16 3.5 21 3.5 C21 8.5 18 11.5 13 11.5 Z"/>
+        <rect x="6" y="20.5" width="12" height="2" rx="1" fill="currentColor"/>
+      </symbol>
+
+      <!-- 剪纸窗花角饰 -->
+      <symbol id="corner" viewBox="0 0 48 48">
+        <path fill="#A8C3EC" d="M0 48 V0 C4 14 12 22 24 24 C26 36 34 44 48 48 Z"/>
+        <circle cx="9" cy="38" r="3.2" fill="#FBF6EA"/>
+        <path fill="#FBF6EA" d="M6 22 Q12 24 14 30 Q8 30 6 22 Z M20 36 Q26 38 28 44 Q22 44 20 36 Z"/>
+        <circle cx="3.5" cy="12" r="1.6" fill="#FBF6EA"/><circle cx="34" cy="45" r="1.6" fill="#FBF6EA"/>
+      </symbol>
+    </defs>
+  </svg>
 <main class="app">
   <header class="topbar">
     <div class="brand"><svg viewBox="0 0 48 36" aria-hidden="true"><path d="M7 17c0-7 6-12 15-12 7 0 12 4 14 10 5 0 6-5 6-5 3 9-2 14-8 14-3 5-8 7-15 5C11 28 7 24 7 17Z" fill="currentColor"/><circle cx="15" cy="15" r="1.5" fill="white"/><path d="M22 3V0m4 4 3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><div><h1>蓝白鲸语</h1><p>A LITTLE ROOM, A LITTLE COMPANION</p></div></div>
@@ -41,7 +77,22 @@
       <div id="loading" class="loading"><span class="spinner"></span><p>打开她的小房间…</p></div>
       <div class="room-hint"><span class="click-dot"></span><output id="farm-plot-status" aria-live="polite" aria-atomic="true"></output><span id="hint">点窗下软垫看天，点地面指路，点床或书桌互动</span></div>
       <div id="room-clock"></div>
-      <div id="room-map"></div>
+      <div id="room-map">
+        <div class="map-actions">
+          <button class="hud-button seed-btn" id="seedBtn" hidden type="button" aria-haspopup="dialog" aria-controls="seedOverlay" aria-expanded="false">
+            <span class="hud-button__face">
+              <svg class="hud-button__icon" viewBox="0 0 32 32" aria-hidden="true">
+                <path fill="#A8C3EC" d="M9.5 12 H25 L26.5 29 H8 Z" transform="translate(1.5 1.5)"/>
+                <path fill="#FBF6EA" d="M8 12 H24 L25.5 29 H6.5 Z"/>
+                <path fill="#A8C3EC" d="M7 6 H25 V12 L23 13.5 L21 12 L19 13.5 L17 12 L15 13.5 L13 12 L11 13.5 L9 12 L7 13.5 Z"/>
+                <path fill="#2B4583" d="M15.2 26 V21 C15.2 19 13.8 17.6 11 17.6 C11 20 12.4 21.4 15.2 21.4 Z M16.8 26 V20 C16.8 17.6 18.4 16 21 16 C21 18.6 19.4 20.2 16.8 20.2 Z"/>
+              </svg>
+              <span class="hud-button__label"><small>我的背包</small><b>种子库</b></span>
+            </span>
+            <span class="seed-btn__badge" id="seedBadge">0</span>
+          </button>
+        </div>
+      </div>
       <div id="motion-stage" hidden>
         <div class="stage-toolbar"><strong id="preview-title"></strong><button id="close-motion-stage" type="button" aria-label="关闭动作预览" title="关闭动作预览">×</button></div>
         <svg viewBox="0 0 600 460" role="img" aria-labelledby="preview-title">
@@ -98,6 +149,33 @@
   </div>
   <footer><span>一方小天地，一点小陪伴。</span><span>原场景 · 原桌宠素材 <b>／</b> 本地互动演示</span></footer>
 </main>
+<dialog class="seed-overlay" id="seedOverlay" aria-labelledby="seedTitle">
+  <section class="seed-dialog" id="seedDialog">
+    <div class="seed-dialog__layer seed-dialog__layer--navy"></div>
+    <div class="seed-dialog__layer seed-dialog__layer--sky"></div>
+
+    <div class="seed-paper">
+      <svg class="seed-corner seed-corner--l" aria-hidden="true"><use href="#corner"/></svg>
+      <svg class="seed-corner seed-corner--r" aria-hidden="true"><use href="#corner"/></svg>
+
+      <header class="seed-head">
+        <div class="seed-ribbon">
+          <svg aria-hidden="true"><use href="#ico-sprout"/></svg>
+          <h2 id="seedTitle">种子库</h2>
+        </div>
+        <p class="seed-sum" id="seedSum"></p>
+        <button class="seed-close" id="seedClose" type="button" aria-label="关闭种子库">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+        </button>
+      </header>
+
+      <div class="seed-body">
+        <ul class="seed-grid" id="seedGrid" role="listbox" aria-label="持有的种子"></ul>
+        <aside class="seed-detail" id="seedDetail" aria-live="polite"></aside>
+      </div>
+    </div>
+  </section>
+</dialog>
 <script>/* DATA */</script>
 <script>/* APP */</script>
 </body>

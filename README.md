@@ -31,10 +31,15 @@ npm run build
 | 侧边栏和场景界面 | [HTML 模板](index.template.html)、[样式](src/style.css) |
 | 场景切换、角色控制、家具互动 | [app.js](src/app.js) |
 | 土地点击效果和每块地的轮廓 | [farm-plots.js](src/farm-plots.js)、[农场场景配置](assets/farm/scene.json) |
+| 种子库的品种、库存、成熟天数和说明 | [种子配置](assets/farm/seeds.json) |
 | 行走范围和活动选择 | [navigation.js](src/navigation.js)、[free-activities.js](src/free-activities.js)、[农场场景配置](assets/farm/scene.json) |
 | 房间、菜园和角色贴图 | [房间](assets/scene)、[房间天色](assets/time-scenes)、[农场](assets/farm)、[角色动作素材](vendor/whale/tex) |
 
 菜园按午后、黄昏和夜晚三份 PSD 的图层顺序绘制。要更新素材，在装有 Pillow 和 psd-tools 的 Python 环境中运行 `python assets/farm/export-layers.py "小农园三个独立PSD.zip"`。导入器会更新各图层的 PNG、坐标清单和三个时段的合成预览。
+
+在菜园右下角点击「种子库」可查看库存。种子配置是一个 JSON 数组，按数组顺序展示；每项填写唯一的 `id`、名称 `name`、持有数量 `count`、成熟天数 `days`、季节数组 `seasons`（春、夏、秋、冬）和简介 `desc`。可用 `icon` 指定图案，内置图案名为 `carrot`、`tomato`、`cabbage`、`strawberry`、`pumpkin`、`blueberry`。省略时按 `id` 匹配，其他品种使用通用种袋。
+
+修改 JSON 后运行 `npm run build`，本地服务和离线 HTML 都会使用新库存。对接游戏存档时，可在游戏就绪后调用 `window.SeedLibrary.setSeeds(list)`，用同一格式即时更新当前页面的库存。
 
 修改源码或素材后，运行 `npm run build`，刷新浏览器验证。玩法细节可查 [使用说明](使用说明.txt)，历次测试和已经修过的问题可查 [验证记录](验证记录.txt)。
 

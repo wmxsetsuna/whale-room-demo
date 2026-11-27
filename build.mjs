@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import { readSeedInventory } from './src/seed-library.js';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const require=createRequire(import.meta.url);
 let esbuild;
@@ -13,11 +14,13 @@ const read=p=>fs.readFile(path.join(root,p),'utf8');
 const scene=JSON.parse(await read('assets/scene/scene.json'));
 const farm=JSON.parse(await read('assets/farm/scene.json'));
 farm.layers=JSON.parse(await read('assets/farm/layers.json'));
+farm.seeds=readSeedInventory(JSON.parse(await read('assets/farm/seeds.json')));
 const model=JSON.parse(await read('vendor/whale/model.json'));
 const images={};
 async function image(key,file){images[key]='data:image/png;base64,'+(await fs.readFile(path.join(root,file))).toString('base64');}
 await image('scene/composite.png','assets/scene/composite.png');
 await image('scene/chair-front.png','assets/scene/chair-front.png');
+await image('farm/seed-packets.png','assets/farm/seed-packets.png');
 for (const period of ['dusk', 'dawn']) {
   const filename = `time-scenes/${period}.png`;
   await image(filename, `assets/${filename}`);
@@ -45,7 +48,7 @@ const result=await esbuild.build({entryPoints:[path.join(root,'src/app.js')],bun
 const js=result.outputFiles[0].text.replaceAll('</script','<\\/script');
 const data=JSON.stringify({scene,farm,model,images,deskSeat,furnitureFlash}).replaceAll('<','\\u003c');
 const template=await read('index.template.html');
-const styles=await Promise.all(['src/style.css','src/room-clock.css','src/room-map.css'].map(read));
+const styles=await Promise.all(['src/style.css','src/room-clock.css','src/room-map.css','src/seed-library.css'].map(read));
 const html=template.replace('/* STYLE */',()=>styles.join('\n')).replace('/* DATA */',()=>`window.ROOM_DATA=${data};`).replace('/* APP */',()=>js);
 await fs.writeFile(path.join(root,'蓝白鲸语-行走Demo.html'),html);
 console.log(`Built offline demo (${(Buffer.byteLength(html)/1024/1024).toFixed(2)} MB).`);

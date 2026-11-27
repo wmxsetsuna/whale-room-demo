@@ -4,6 +4,7 @@ import { createWhaleFigure } from '../vendor/whale/figure.js';
 import { shenzhenSunSchedule } from './shenzhen-sun.js';
 import { initRoomClock } from './room-clock.js';
 import { initRoomMap } from './room-map.js';
+import { initSeedLibrary } from './seed-library.js';
 import { createFurnitureHitTest, createDeskPetHitTest } from './furniture-hit.js';
 import { createDeskLoop, loadDeskFrames } from './desk-loop.js';
 import { createAtlasPlayer } from './atlas-player.js';
@@ -701,17 +702,36 @@ async function init() {
   const preview = initMotionPreview(loadFigure, deskFrames);
   const roomMap = initRoomMap({
     getLocation: () => locationId,
-    travelTo: destination => { if (!preview.motion) changeLocation(destination); },
+    travelTo: destination => {
+      if (preview.motion) return;
+      changeLocation(destination);
+      seedLibrary.setAvailable(destination === 'farm');
+    },
   });
+  const seedLibrary = initSeedLibrary(data.farm.seeds, data.images['farm/seed-packets.png']);
+  seedLibrary.setAvailable(locationId === 'farm');
+  window.SeedLibrary = { open: seedLibrary.open, close: seedLibrary.close, setSeeds: seedLibrary.setSeeds };
   $('#loading').hidden=true;
   scene.addEventListener('pointermove', event => {
     const p = eventPoint(event);
     scene.style.cursor = (locationId === 'room' && (hitFurniture(p) || onWindowCushion(p))) || hitPet(p) ? 'pointer' : '';
   });
+  // A mobile browser may retarget a tap on a narrow path to a nearby plot button.
+  // Keep the original contact point, but let the browser distinguish taps from scrolling.
+  let farmTouch = null;
+  scene.addEventListener('pointerdown', event => {
+    farmTouch = locationId === 'farm' && event.isPrimary && event.pointerType === 'touch'
+      ? { clientX: event.clientX, clientY: event.clientY } : null;
+  });
+  scene.addEventListener('pointercancel', () => { farmTouch = null; });
   scene.addEventListener('click',event=>{
+    const touch = locationId === 'farm' && event.detail > 0 ? farmTouch : null;
+    farmTouch = null;
     if (preview.motion) return;
+    const target = touch ? document.elementFromPoint(touch.clientX, touch.clientY) : event.target;
+    if (locationId === 'farm' && farmPlots.select(target)) return;
     farmPlots.clear();
-    const p=eventPoint(event);
+    const p=eventPoint(touch ?? event);
     const furniture = locationId === 'room' && hitFurniture(p);
     if (furniture && masks.find(mask => mask.id === furniture).visible) {
       requestFurniture(furniture);

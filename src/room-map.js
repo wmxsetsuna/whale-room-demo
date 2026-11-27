@@ -44,23 +44,22 @@ const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 export function initRoomMap({ getLocation, travelTo }) {
   const host = document.getElementById('room-map');
-  host.innerHTML = `
-    <button class="map-door" type="button" aria-controls="room-floor-plan" aria-expanded="false">
-      <svg viewBox="0 0 190 56" aria-hidden="true">
-        <rect x="4" y="4" width="190" height="52" rx="8" class="map-blue"/>
-        <rect width="190" height="52" rx="8" class="map-ink"/>
-        <rect x="5" y="5" width="180" height="42" rx="6" fill="none" stroke="var(--map-paper)" stroke-dasharray="2 3" opacity=".4"/>
-        <g transform="translate(14 14)" class="map-paper">
-          <path d="M0 3L7 0l7 3 7-3v21l-7 3-7-3-7 3Z"/><path d="M7 0V21M14 3V24" fill="none" stroke="var(--map-ink)" stroke-width="1.2"/>
-          <circle cx="10.5" cy="10" r="2.2" class="map-ink"/>
-        </g>
-        <g class="map-paper"><text x="46" y="22" font-size="9" opacity=".75" letter-spacing="1">当前房间</text>
-          <text class="map-current" x="46" y="39" font-size="15" font-weight="700" letter-spacing="3"></text>
-          <text x="160" y="31" font-size="11" text-anchor="middle" letter-spacing="1">切换</text></g>
-        <path d="M134 12v28" stroke="var(--map-paper)" opacity=".35"/>
-        <path class="map-arrow" d="M156 40l4-4 4 4" fill="none" stroke="var(--map-paper)" stroke-width="1.6" stroke-linecap="round"/>
-      </svg>
-    </button>
+  host.querySelector('.map-actions').insertAdjacentHTML('beforeend', `
+    <button class="hud-button map-door" type="button" aria-controls="room-floor-plan" aria-expanded="false">
+      <span class="hud-button__face">
+        <span class="map-door__room">
+          <svg class="hud-button__icon" viewBox="-1.5 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M0 3L7 0l7 3 7-3v21l-7 3-7-3-7 3Z"/><path d="M7 0V21M14 3V24" fill="none" stroke="var(--hud-ink)" stroke-width="1.2"/>
+            <circle cx="10.5" cy="10" r="2.2" fill="var(--hud-ink)"/>
+          </svg>
+          <span class="hud-button__label"><small>当前房间</small><b class="map-current"></b></span>
+        </span>
+        <span class="map-door__switch"><span>切换</span>
+          <svg class="map-arrow" viewBox="0 0 12 6" aria-hidden="true"><path d="m2 5 4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </span>
+      </span>
+    </button>`);
+  host.insertAdjacentHTML('beforeend', `
     <div id="room-floor-plan" class="map-plan" role="group" aria-label="房间地图" inert>
       <svg viewBox="0 0 212 252" role="group" aria-label="选择目的地">
         <defs><filter id="map-paper-texture" x="0" y="0" width="100%" height="100%">
@@ -90,7 +89,7 @@ export function initRoomMap({ getLocation, travelTo }) {
         <g text-anchor="middle" class="map-ink"><text x="73" y="58" font-size="11" opacity=".65" letter-spacing="3">换个房间</text>
           <text class="map-destination" x="77" y="94" font-size="26" font-weight="700" letter-spacing="8"></text></g>
       </svg>
-    </div>`;
+    </div>`);
   const door = host.querySelector('.map-door');
   const panel = host.querySelector('.map-plan');
   const blind = host.querySelector('.map-blind');

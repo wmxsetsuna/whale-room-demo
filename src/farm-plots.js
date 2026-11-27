@@ -3,6 +3,7 @@ export function initFarmPlots(plots) {
   const highlights = document.getElementById('farm-plot-highlights');
   const status = document.getElementById('farm-plot-status');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const highlightsByButton = new Map();
   let selected = null;
   let pulseFrame;
 
@@ -21,13 +22,16 @@ export function initFarmPlots(plots) {
     fade(start);
   }
 
-  function select(button, paint) {
+  function select(button) {
+    const paint = highlightsByButton.get(button);
+    if (!paint) return false;
     clear();
     selected = { button, paint };
     button.setAttribute('aria-pressed', 'true');
     paint.classList.add('selected');
     status.textContent = '已选中' + button.getAttribute('aria-label');
     if (!reducedMotion.matches) pulse(paint);
+    return true;
   }
 
   function pathData(loops) {
@@ -50,21 +54,18 @@ export function initFarmPlots(plots) {
     paint.setAttribute('d', outline ? pathData([outline]) : hitPath);
     paint.setAttribute('fill-rule', 'evenodd');
     highlights.append(paint);
+    highlightsByButton.set(button, paint);
     button.addEventListener('pointerenter', () => paint.classList.add('hovered'));
     button.addEventListener('pointerleave', () => paint.classList.remove('hovered'));
     button.addEventListener('focus', () => paint.classList.toggle('keyboard-focus', button.matches(':focus-visible')));
     button.addEventListener('blur', () => paint.classList.remove('keyboard-focus'));
     button.addEventListener('pointerdown', () => paint.classList.remove('keyboard-focus'));
-    button.addEventListener('click', event => {
-      event.stopPropagation();
-      select(button, paint);
-    });
     button.addEventListener('keydown', event => {
       paint.classList.add('keyboard-focus');
       if (event.key !== 'Enter' && event.key !== ' ') return;
       event.preventDefault();
       event.stopPropagation();
-      if (!event.repeat) select(button, paint);
+      if (!event.repeat) select(button);
     });
     layer.append(button);
   }
@@ -78,5 +79,5 @@ export function initFarmPlots(plots) {
     selected = null;
     status.textContent = '';
   }
-  return { get selectedId() { return selected?.button.dataset.plotId ?? null; }, clear };
+  return { get selectedId() { return selected?.button.dataset.plotId ?? null; }, select, clear };
 }

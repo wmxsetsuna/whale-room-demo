@@ -15,8 +15,9 @@
 #room-map .map-ink { fill: var(--map-ink); }
 #room-map .map-paper { fill: var(--map-paper); }
 
-.map-door, .map-plan {
+.map-actions, .map-plan {
   --door-width: clamp(130px, 17.59cqw, 220px);
+  --door-height: max(44px, calc(var(--door-width) * 56 / 190));
   --door-right: clamp(10px, 1.67cqw, 22px);
   --door-bottom: clamp(10px, 1.2cqw, 16px);
   position: absolute;
@@ -25,23 +26,109 @@
   touch-action: manipulation;
 }
 
-#room-map .map-door {
+.map-actions {
   bottom: var(--door-bottom);
-  display: grid;
-  align-items: end;
-  width: var(--door-width);
-  min-height: 44px;
-  padding: 0;
-  border: 0;
-  border-radius: 8px;
-  background: none;
-  box-shadow: none;
-  filter: drop-shadow(0 2px 3px var(--map-shadow));
-  pointer-events: auto;
-  transition: transform .18s;
+  height: var(--door-height);
+  display: flex;
+  align-items: stretch;
+  gap: clamp(8px, 1cqw, 12px);
+  --hud-radius: calc(var(--door-width) * 8 / 190);
+  --hud-ink: #2b4583;
+  --hud-paper: #fbf6ea;
+  --hud-sky: #a8c3ec;
+  -webkit-font-smoothing: antialiased;
+  --hud-depth: clamp(3px, calc(var(--door-width) * 4 / 190), 5px);
+  --hud-inset: clamp(3px, calc(var(--door-width) * 5 / 190), 6px);
+  --hud-content-gap: clamp(4px, calc(var(--door-width) * .036), 8px);
 }
 
-.map-door > svg, .map-plan > svg {
+.map-actions .hud-button {
+  position: relative;
+  display: flex;
+  height: 100%;
+  padding: 0 var(--hud-depth) var(--hud-depth) 0;
+  border: 0;
+  border-radius: var(--hud-radius);
+  font: inherit;
+  color: var(--hud-paper);
+  background: transparent;
+  pointer-events: auto;
+  transition: transform .18s ease;
+}
+.map-actions .hud-button[hidden] { display: none; }
+.map-actions .seed-btn { width: clamp(90px, calc(var(--door-width) * .59), 130px); }
+.map-actions .map-door { width: var(--door-width); }
+
+/* Both plates reserve the same space for the offset paper inside their hit targets. */
+.hud-button__face {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--hud-content-gap);
+  padding-inline: calc(var(--hud-inset) + 3px);
+  border-radius: inherit;
+  background: var(--hud-ink);
+  box-shadow: var(--hud-depth) var(--hud-depth) 0 var(--hud-sky), 0 3px 8px var(--map-shadow);
+}
+.hud-button__face::before {
+  content: "";
+  position: absolute;
+  inset: var(--hud-inset);
+  border: 1px dashed rgb(251 246 234 / 42%);
+  border-radius: calc(var(--hud-radius) - 2px);
+  pointer-events: none;
+}
+.hud-button__icon { flex: none; width: clamp(20px, calc(var(--door-width) * .14), 30px); height: auto; }
+.hud-button__label { display: grid; row-gap: 1px; text-align: left; white-space: nowrap; }
+.hud-button__label small {
+  font-size: clamp(10px, calc(var(--door-width) * .056), 12px);
+  line-height: 1.15;
+  font-weight: 400;
+  letter-spacing: .05em;
+  opacity: .8;
+}
+.hud-button__label b {
+  font-size: clamp(14px, calc(var(--door-width) * .085), 18px);
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: .06em;
+}
+.map-door .hud-button__face {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
+  padding-inline: 0;
+  gap: 0;
+}
+.map-door__room {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--hud-content-gap);
+}
+.map-door__room .hud-button__label { text-align: center; }
+.map-door__switch {
+  position: relative;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  row-gap: 2px;
+  font-size: clamp(10px, calc(var(--door-width) * .062), 13px);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.map-door__switch::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  border-inline-start: 1px solid rgb(251 246 234 / 35%);
+}
+.map-arrow { display: block; width: .95em; height: auto; }
+
+.map-plan > svg {
   width: 100%;
   height: auto;
   display: block;
@@ -49,17 +136,17 @@
 }
 
 @media (hover: hover) {
-  #room-map .map-door:hover { transform: translateY(-2px); }
+  .map-actions .hud-button:hover { transform: translateY(-2px); }
 }
+.map-actions .hud-button:active { transform: translateY(1px); }
 
-#room-map .map-door:focus-visible {
+.map-actions .hud-button:focus-visible {
   outline: 2px solid var(--map-ink);
   outline-offset: 5px;
 }
 
 .map-door .map-arrow {
   transition: transform .3s;
-  transform-box: fill-box;
   transform-origin: center;
 }
 
@@ -67,7 +154,7 @@
 
 .map-plan {
   width: min(clamp(190px, 19.63cqw, 244px), calc((100cqh - 76px) * .84));
-  bottom: calc(var(--door-bottom) + max(44px, var(--door-width) * .295) + 9px);
+  bottom: calc(var(--door-bottom) + var(--door-height) + 9px);
   filter: drop-shadow(0 4px 6px var(--map-shadow));
   transform-origin: 85% 100%;
   transform: translateY(24px) scale(.6);
@@ -76,7 +163,7 @@
   transition: transform .35s cubic-bezier(.3, 1.4, .5, 1), opacity .2s, visibility 0s .35s;
 }
 
-.map-door[aria-expanded="true"] + .map-plan {
+#room-map:has(.map-door[aria-expanded="true"]) .map-plan {
   visibility: visible;
   pointer-events: auto;
   transform: none;
@@ -154,6 +241,11 @@
     right: calc(var(--door-right) + var(--door-width) + 12px);
     bottom: 7px;
     width: min(190px, calc(100cqw - var(--door-width) - 34px), calc((100cqh - 15px) * .84));
+  }
+  .farm-scene .map-plan {
+    right: var(--door-right);
+    bottom: calc(var(--door-bottom) + var(--door-height) + 9px);
+    width: min(190px, calc((100cqh - var(--door-bottom) - var(--door-height) - 16px) * .84));
   }
 }
 

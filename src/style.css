@@ -192,4 +192,18 @@
   }
   .click-dot { flex-shrink: 0; }
   .farm-scene #scene { margin-top: 65px; }
+  .farm-scene .room-hint {
+    right: 252px;
+    max-width: calc(100% - 262px);
+  }
+}
+
+@container (max-width: 440px) {
+  .farm-scene #scene { margin-bottom: 88px; }
+  .farm-scene .room-hint {
+    bottom: 60px;
+    right: 10px;
+    min-height: 22px;
+    max-width: calc(100% - 20px);
+  }
 }

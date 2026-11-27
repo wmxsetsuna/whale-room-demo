@@ -5,13 +5,14 @@ import { shenzhenSunSchedule } from './shenzhen-sun.js';
 import { initRoomClock } from './room-clock.js';
 import { initRoomMap } from './room-map.js';
 import { initSeedLibrary } from './seed-library.js';
+import { createFarmCrops, FARM_CROPS_STORAGE_KEY } from './farm-crops.js';
 import { createFurnitureHitTest, createDeskPetHitTest } from './furniture-hit.js';
 import { createDeskLoop, loadDeskFrames } from './desk-loop.js';
 import { createAtlasPlayer } from './atlas-player.js';
 import { initMotionPreview } from './motion-preview.js';
 import { initFarmPlots } from './farm-plots.js';
 import { initFarmArt } from './farm-art.js';
-import { chooseActivity } from './free-activities.js';
+import { chooseActivity, plantingPoint } from './free-activities.js';
 import { FLOOR, OBSTACLES, WAYPOINTS, SPAWN, ROOM_NAVIGATION, configureNavigation, findPath, isWalkable, nearestWalkable, navigationStats } from './navigation.js';
 
 const $ = s => document.querySelector(s);
@@ -19,6 +20,9 @@ const NS = 'http://www.w3.org/2000/svg';
 const data = window.ROOM_DATA;
 const scene = $('#scene');
 const farmPlots = initFarmPlots(data.farm.plots);
+let farmStorage = null;
+try { farmStorage = window.localStorage; } catch { /* Storage may be disabled for local files. */ }
+const farmCrops = createFarmCrops(data.farm.seeds, data.farm.plots.map(plot => plot.id), { storage: farmStorage });
 let ctl, route = [], goal = null, walkId = 0, waiting = 2.5, auto = true, paused = false, scale = 1, pace = 1.3;
 const guidanceTimeoutMs = 3000;
 let resumeFreeActivityTimer;
@@ -57,6 +61,7 @@ const roomPlaces = {
   desk: { point: besideDeskChair, walking: '正走向书桌', staying: '正在用电脑' },
 };
 const farmPlaces = {
+  plant: { walking: '去空田播种', sowing: '正在播种', staying: '刚种好这块田' },
   field: { point: data.farm.navigation.waypoints.find(point => point.id === 'field'), walking: '去田边看看', staying: '在田边看菜园' },
   pond: { point: data.farm.navigation.waypoints.find(point => point.id === 'pond'), walking: '去池边看水', staying: '在池边看天' },
   rest: { point: data.farm.navigation.waypoints.find(point => point.id === 'rest'), walking: '找个地方歇歇', staying: '在农场歇一会儿' },
@@ -132,6 +137,19 @@ function paintRoom(from, to, mix) {
   blend.setAttribute('opacity', mix);
 }
 
+let lastCropView;
+function refreshCrops() {
+  if (!farmArt) return;
+  const crops = farmCrops.getCrops();
+  // The lighting clock also checks growth. Redraw only when a visible crop changes.
+  const key = JSON.stringify(crops.map(({ plotId, seedId, name, icon, count, stage }) =>
+    [plotId, seedId, name, icon, count, stage]));
+  if (lastCropView === key) return;
+  farmPlots.setCrops(crops);
+  farmArt.setCrops(crops);
+  lastCropView = key;
+}
+
 function paintScene(now, schedule) {
   const { from, to, mix } = sceneLighting(now, schedule);
   const farm = locationId === 'farm';
@@ -139,6 +157,7 @@ function paintScene(now, schedule) {
   if (farm) {
     farmArt ??= initFarmArt(scene, data.farm, data.images);
     farmArt.setLighting(from, to, mix);
+    refreshCrops();
   } else {
     paintRoom(from, to, mix);
   }
@@ -434,7 +453,50 @@ function displayDeskLoop(working) {
   else deskLoop.hide();
 }
 
+async function plantAtBed(visit) {
+  visit.phase = 'sowing';
+  function sow() {
+    // A different tab may be sowing first. Recheck the visit when our turn comes.
+    if (activity !== visit) return;
+    const atBed = Math.hypot(ctl.pet.x - visit.point.x, ctl.pet.gy - visit.point.y) <= 2;
+    const crop = auto && !paused && locationId === 'farm' && atBed
+      && farmCrops.plant(visit.plotId, visit.seedId);
+    if (crop) {
+      visit.phase = 'staying';
+      ctl.pet.facing = -1;
+      ctl.doWord('bow');
+      say(`种下了 ${crop.count} 粒${crop.name}种子`);
+    } else {
+      activity = null;
+      waiting = 1;
+    }
+    setStatus();
+  }
+  try {
+    if (navigator.locks) {
+      await navigator.locks.request(FARM_CROPS_STORAGE_KEY, sow);
+      return;
+    }
+  } catch (error) {
+    // Some local-file contexts expose the API but deny access to Web Locks.
+    if (error.name !== 'SecurityError') {
+      if (activity === visit) {
+        activity = null;
+        waiting = 1;
+        setStatus();
+      }
+      console.error(error);
+      return;
+    }
+  }
+  sow();
+}
+
 function beginStay() {
+  if (activity.id === 'plant') {
+    plantAtBed(activity);
+    return;
+  }
   if (activity.id === 'window') {
     startClimbing();
     return;
@@ -451,14 +513,19 @@ function beginStay() {
 
 function chooseNextActivity() {
   clearBubble();
-  const next = chooseActivity(shenzhenPeriod, previousActivity, Math.random, locationId);
+  const planting = locationId === 'farm' && farmCrops.choosePlanting();
+  const point = planting && plantingPoint(data.farm.plots.find(plot => plot.id === planting.plotId));
+  const next = point
+    ? { ...planting, id: 'plant', duration: 3, point }
+    : chooseActivity(shenzhenPeriod, previousActivity, Math.random, locationId);
   previousActivity = next.id;
   activity = { ...next, phase: 'walking', remaining: next.duration };
-  const target = places[next.id].point;
+  const target = next.point ?? places[next.id].point;
   if (Math.hypot(ctl.pet.x - target.x, ctl.pet.gy - target.y) <= 2) {
     beginStay();
   } else if (walkOnFloor(target)) {
     if (next.id === 'desk') deskState = 'approaching';
+    if (next.id === 'plant') say('去种' + planting.name);
     setStatus();
   } else {
     activity = null;
@@ -708,9 +775,16 @@ async function init() {
       seedLibrary.setAvailable(destination === 'farm');
     },
   });
-  const seedLibrary = initSeedLibrary(data.farm.seeds, data.images['farm/seed-packets.png']);
+  const seedLibrary = initSeedLibrary(farmCrops.getSeeds(), data.images['farm/seed-packets.png']);
+  farmCrops.subscribe(() => {
+    seedLibrary.setSeeds(farmCrops.getSeeds());
+    refreshCrops();
+  });
+  window.addEventListener('storage', event => {
+    if (event.storageArea === farmStorage && (event.key === FARM_CROPS_STORAGE_KEY || event.key === null)) farmCrops.reload();
+  });
   seedLibrary.setAvailable(locationId === 'farm');
-  window.SeedLibrary = { open: seedLibrary.open, close: seedLibrary.close, setSeeds: seedLibrary.setSeeds };
+  window.SeedLibrary = { open: seedLibrary.open, close: seedLibrary.close, setSeeds: farmCrops.setSeeds };
   $('#loading').hidden=true;
   scene.addEventListener('pointermove', event => {
     const p = eventPoint(event);

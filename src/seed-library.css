@@ -127,8 +127,6 @@
 }
 .seed-ribbon svg { width: 1.125em; height: 1.125em; }
 .seed-ribbon h2 { margin: 0; font-size: 1.0625em; font-weight: 800; letter-spacing: .235em; white-space: nowrap; }
-.seed-sum { margin: 0; font-size: .75em; letter-spacing: .04em; opacity: .9; }
-.seed-sum b { margin: 0 .13em; color: var(--seed-sky); font-size: 1.25em; }
 .seed-overlay .seed-close {
   position: relative;
   display: grid;

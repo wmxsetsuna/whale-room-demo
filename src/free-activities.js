@@ -1,3 +1,5 @@
+import { nearestWalkable } from './navigation.js';
+
 // Weights are relative to the activities still available after the last visit.
 const activities = [
   { id: 'rug',    seconds: [45, 90],  weight: { day: 25, dusk: 30, dawn: 65 } },
@@ -10,6 +12,15 @@ const farmActivities = [
   { id: 'pond', seconds: [35, 75], weight: { day: 30, dusk: 60, dawn: 20 } },
   { id: 'rest', seconds: [60, 120], weight: { day: 20, dusk: 20, dawn: 65 } },
 ];
+
+// Stand in the aisle just outside the bed's front-right rim, facing the soil.
+export function plantingPoint(plot) {
+  const outline = plot?.outline ?? plot?.polygon;
+  if (!outline?.length) return null;
+  const right = outline.reduce((a, b) => a[0] > b[0] ? a : b);
+  const front = outline.reduce((a, b) => a[1] > b[1] ? a : b);
+  return nearestWalkable({ x: (right[0] + front[0]) / 2, y: (right[1] + front[1]) / 2 });
+}
 
 export function chooseActivity(period, previousId, random = Math.random, location = 'room') {
   const choices = location === 'farm' ? farmActivities : activities;

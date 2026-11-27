@@ -1,7 +1,9 @@
 import { initFarmOcclusion } from './farm-occlusion.js';
+import { initFarmCropView } from './farm-crop-view.js';
 
 export function initFarmArt(scene, farm, images) {
   const defs = scene.querySelector('defs');
+  const crops = initFarmCropView(scene, farm.plots, images['farm/crop-sprites.png']);
   const stacks = document.createDocumentFragment();
   for (const [phase, layers] of Object.entries(farm.layers)) {
     const group = document.createElementNS(scene.namespaceURI, 'g');
@@ -12,6 +14,7 @@ export function initFarmArt(scene, farm, images) {
         const highlights = document.createElementNS(scene.namespaceURI, 'use');
         highlights.setAttribute('href', '#farm-plot-highlights');
         group.append(highlights);
+        crops.addToStack(group, phase);
       }
       const image = document.createElementNS(scene.namespaceURI, 'image');
       image.id = `farm-${phase}-${id}`;
@@ -41,6 +44,10 @@ export function initFarmArt(scene, farm, images) {
       showStack(blend, to, mix);
       occlusion.setLighting(from, to, mix);
     },
-    update: occlusion.update,
+    setCrops: crops.setCrops,
+    update(position) {
+      occlusion.update(position);
+      crops.update(position);
+    },
   };
 }

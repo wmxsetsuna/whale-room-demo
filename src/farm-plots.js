@@ -4,6 +4,7 @@ export function initFarmPlots(plots) {
   const status = document.getElementById('farm-plot-status');
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const highlightsByButton = new Map();
+  const landLabels = new Map();
   let selected = null;
   let pulseFrame;
 
@@ -47,7 +48,9 @@ export function initFarmPlots(plots) {
     button.setAttribute('fill-rule', 'evenodd');
     button.setAttribute('role', 'button');
     button.setAttribute('tabindex', '0');
-    button.setAttribute('aria-label', `第 ${row} 行第 ${column} 列土地`);
+    const label = `第 ${row} 行第 ${column} 列土地`;
+    landLabels.set(button, label);
+    button.setAttribute('aria-label', label + '，空田');
     button.setAttribute('aria-pressed', 'false');
     const paint = document.createElementNS(layer.namespaceURI, 'path');
     paint.classList.add('farm-plot-highlight');
@@ -79,5 +82,19 @@ export function initFarmPlots(plots) {
     selected = null;
     status.textContent = '';
   }
-  return { get selectedId() { return selected?.button.dataset.plotId ?? null; }, select, clear };
+  function setCrops(planted) {
+    const byPlot = new Map(planted.map(crop => [crop.plotId, crop]));
+    const phases = ['幼苗期', '生长期', '成熟期'];
+    for (const [button, land] of landLabels) {
+      const crop = byPlot.get(button.dataset.plotId);
+      const description = crop ? `${crop.name} ${crop.count} 株，${phases[crop.stage - 1]}` : '空田';
+      const label = land + '，' + description;
+      if (button.getAttribute('aria-label') !== label) {
+        button.setAttribute('aria-label', label);
+        if (selected?.button === button) status.textContent = '已选中' + label;
+      }
+    }
+  }
+
+  return { get selectedId() { return selected?.button.dataset.plotId ?? null; }, select, clear, setCrops };
 }

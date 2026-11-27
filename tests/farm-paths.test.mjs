@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { farmOccluders } from '../src/farm-occlusion.js';
+import { plantingPoint } from '../src/free-activities.js';
 import { configureNavigation, findPath, isWalkable, nearestWalkable, segmentWalkable } from '../src/navigation.js';
 
 const farm = JSON.parse(readFileSync(new URL('../assets/farm/scene.json', import.meta.url), 'utf8'));
@@ -19,6 +20,21 @@ const lanes = [
   [lowerCrossing, { x: 727, y: 668 }, { x: 689, y: 640 }],
 ];
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+
+test('the whale can reach the near edge of each bed from the entrance and every other bed', () => {
+  configureNavigation(farm.navigation);
+  const beds = farmOccluders(farm.navigation);
+  const spots = farm.plots.map(plantingPoint);
+  for (const [index, plot] of farm.plots.entries()) {
+    const target = spots[index];
+    const front = beds.find(bed => bed.layer === `bed${index + 1}`).frontAt(target.x);
+    assert.ok(target.y >= front && target.y < front + 15, plot.id);
+    for (const start of [farm.navigation.spawn, ...spots]) {
+      if (start === target) continue;
+      assert.deepEqual(findPath(start, target).at(-1), target, plot.id);
+    }
+  }
+});
 
 test('each aisle connects directly to its crossings in both directions', () => {
   configureNavigation(farm.navigation);

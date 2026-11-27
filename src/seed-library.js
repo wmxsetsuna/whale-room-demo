@@ -39,7 +39,6 @@ export function initSeedLibrary(initialSeeds, packetSheet) {
   const closeButton = document.getElementById('seedClose');
   const grid = document.getElementById('seedGrid');
   const detail = document.getElementById('seedDetail');
-  const summary = document.getElementById('seedSum');
   let seeds = [], selected = -1, closingTransition = null;
 
   function renderGrid() {
@@ -105,16 +104,27 @@ export function initSeedLibrary(initialSeeds, packetSheet) {
   function setSeeds(list) {
     const previousId = seeds[selected]?.id;
     const restoreCardFocus = grid.contains(document.activeElement);
+    const previous = seeds;
     seeds = readSeedInventory(list);
     const previousIndex = seeds.findIndex(seed => seed.id === previousId);
     selected = previousIndex >= 0 ? previousIndex : seeds.length ? 0 : -1;
-    const total = seeds.reduce((sum, seed) => sum + seed.count, 0);
-    summary.innerHTML = `共<b>${seeds.length}</b>种 · <b>${total}</b>粒`;
     badge.textContent = String(seeds.length);
     if (overlay.open) {
-      renderGrid();
+      // Keep the open cards in place when planting changes only their stock.
+      const sameCards = previous.length === seeds.length && seeds.every((seed, i) =>
+        ['id', 'name', 'icon', 'days'].every(key => previous[i][key] === seed[key]));
+      if (sameCards) {
+        seeds.forEach((seed, i) => {
+          if (seed.count === previous[i].count) return;
+          const card = grid.children[i].querySelector('.seed-card');
+          card.querySelector('.seed-card__count').textContent = '×' + seed.count;
+          card.setAttribute('aria-label', seed.name + '种子，持有 ' + seed.count + ' 粒');
+        });
+      } else {
+        renderGrid();
+        if (restoreCardFocus) focusSelection();
+      }
       renderDetail();
-      if (restoreCardFocus) focusSelection();
     }
   }
 

@@ -21,6 +21,7 @@ async function image(key,file){images[key]='data:image/png;base64,'+(await fs.re
 await image('scene/composite.png','assets/scene/composite.png');
 await image('scene/chair-front.png','assets/scene/chair-front.png');
 await image('farm/seed-packets.png','assets/farm/seed-packets.png');
+await image('farm/crop-sprites.png','assets/farm/crop-sprites.png');
 for (const period of ['dusk', 'dawn']) {
   const filename = `time-scenes/${period}.png`;
   await image(filename, `assets/${filename}`);
